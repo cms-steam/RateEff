@@ -35,13 +35,15 @@ crossSections8TeV={
 
 crossSections13TeV={
     ## QCD Cross sections
-    'QCD5to10'    :(80710000000.,"QCD_Pt-5to10_antiEMOut_"),
-    'QCD10to15'    :(7528000000.,"QCD_Pt-10to15_antiEMOut_"),
-    'QCD15to30'    :(1644000000.,"QCD_Pt-15to30_antiEMOut_"),
-    'QCD30to50'    :(164400000.,"QCD_Pt-30to50_antiEMOut_"),
-    'QCD50to80'    :(21930000.,"QCD_Pt-50to80_antiEMOut_"),
-    'QCD80to120'   :(3000000.,"QCD_Pt-80to120_antiEMOut_"),
-    'QCD120to170'  :(493200.,"QCD_Pt-120to170_antiEMOut_"),
+    #1st number is the cross section, the last number is EM anti-filter efficiency
+    #for pt bins 5-170, which you can get using efficiency.py
+    'QCD5to10'    :(80710000000.*0.999999,"QCD_Pt-5to10_antiEMOut_"),  
+    'QCD10to15'    :(7528000000.*0.9999,"QCD_Pt-10to15_antiEMOut_"),
+    'QCD15to30'    :(1644000000.*0.9959,"QCD_Pt-15to30_antiEMOut_"),
+    'QCD30to50'    :(164400000*0.9481,"QCD_Pt-30to50_antiEMOut_"),
+    'QCD50to80'    :(21930000.*0.8820,"QCD_Pt-50to80_antiEMOut_"),
+    'QCD80to120'   :(3000000.*0.8456,"QCD_Pt-80to120_antiEMOut_"),
+    'QCD120to170'  :(493200.*0.8355,"QCD_Pt-120to170_antiEMOut_"),
     'QCD170to300'  :(12030.,"QCD_Pt-170to300_nofiltOut_"),
     'QCD300to470'  :(7475.,"QCD_Pt-300to470_nofiltOut_"),
     'QCD470to600'  :(587.1,"QCD_Pt-470to600_nofiltOut_"),
@@ -50,30 +52,33 @@ crossSections13TeV={
     'QCD1000to1400':(8.975,"QCD_Pt-1000to1400_nofiltOut_"),
     'QCD1400to1800':(0.8975,"QCD_Pt-1400to1800_nofiltOut_"),
     'QCD1800'      :(0.737844,"QCD_Pt-1800_nofiltOut_"),
-    ## EM Enriched cross sections    
+     #EM Enriched cross sections    
+    #the 2nd number is the filtering efficiency you can get from McM website
     'EMEnr5to10'    :(80710000000.*0.024,"QCD_Pt-5to10_EMEnrichedOut_"),
     'EMEnr10to20'    :(8838000000.*0.143,"QCD_Pt-10to20_EMEnrichedOut_"),
     'EMEnr20to30'    :(677300000.*0.007,"QCD_Pt-20to30_EMEnrichedOut_"),
     'EMEnr30to80'    :(185900000.*0.056,"QCD_Pt-30to80_EMEnrichedOut_"),
     'EMEnr80to170'   :(3529000.*0.158,"QCD_Pt-80to170_EMEnrichedOut_"),
-    ## Mu Enriched cross sections
-    'MuEnr15to20'    :(1576000000.*0.0039,"QCD_Pt-15to20_MuEnrichedPt5_antiEMOut_"),
-    'MuEnr20to30'    :(675300000.*0.0065,"QCD_Pt-20to30_MuEnrichedPt5_antiEMOut_"),
-    'MuEnr30to50'    :(164400000.*0.0122,"QCD_Pt-30to50_MuEnrichedPt5_antiEMOut_"),
-    'MuEnr50to80'    :(21930000.*0.0218,"QCD_Pt-50to80_MuEnrichedPt5_antiEMOut_"),
-    'MuEnr80to120'   :(3000000.*0.0395,"QCD_Pt-80to120_MuEnrichedPt5_antiEMOut_"),
-    'MuEnr120to170'   :(493200.*0.0473,"QCD_Pt-120to170_MuEnrichedPt5_antiEMOut_"),
+     #Mu Enriched cross sections
+    #the 2nd number is the filtering efficiency you can get from McM website
+    'MuEnr15to20'    :(1576000000.*0.0039*0.9991,"QCD_Pt-15to20_MuEnrichedPt5_antiEMOut_"),
+    'MuEnr20to30'    :(675300000.*0.0065*0.9922,"QCD_Pt-20to30_MuEnrichedPt5_antiEMOut_"),
+    'MuEnr30to50'    :(164400000.*0.0122*0.9606,"QCD_Pt-30to50_MuEnrichedPt5_antiEMOut_"),
+    'MuEnr50to80'    :(21930000.*0.0218*0.9074,"QCD_Pt-50to80_MuEnrichedPt5_antiEMOut_"),
+    'MuEnr80to120'   :(3000000.*0.0395*0.8735,"QCD_Pt-80to120_MuEnrichedPt5_antiEMOut_"),
+    'MuEnr120to170'   :(493200.*0.0473*0.8602,"QCD_Pt-120to170_MuEnrichedPt5_antiEMOut_"),
     'MuEnr170to300'   :(12030.*0.0676,"QCD_Pt-170to300_MuEnrichedPt5_nofiltOut_"),
     'MuEnr300to470'   :(7475.*0.0864,"QCD_Pt-300to470_MuEnrichedPt5_nofiltOut_"),
     'MuEnr470to600'   :(587.1*0.1024,"QCD_Pt-470to600_MuEnrichedPt5_nofiltOut_"),
     'MuEnr600to800'   :(167.*0.0996,"QCD_Pt-600to800_MuEnrichedPt5_nofiltOut_"),
     'MuEnr800to1000'   :(28.25*0.1033,"QCD_Pt-800to1000_MuEnrichedPt5_nofiltOut_"),
     'MuEnr1000'   :(8.975*0.1097,"QCD_Pt-1000_MuEnrichedPt5_nofiltOut_"),
-    ## W and Z cross sections
+     #W and Z cross sections
     'WToENu'         :(16000.,"WToENuOut_"),
     'WToMuNu'        :(16100.,"WToMuNuOut_"),
-    'ZToMuMu'        :(6870.,"DYToMuMu_Out_"),
-    'ZToEE'          :(6960.,"DYToEE_Out_"),
-    ## Photon Cross Section (Flat. Weights already applied by IB)
-    ## 'G_Pt-15to3000'  :(2.064133E7,"PUPhoton")
+    'ZToMuMu'        :(6870.,"DYToMuMuOut_"),
+    'ZToEE'          :(6960.,"DYToEEOut_"),
+    # Photon Cross Section (Flat. Weights already applied by IB)
+    # 'G_Pt-15to3000'  :(2.064133E7,"PUPhoton")
+    
     }

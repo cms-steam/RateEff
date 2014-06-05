@@ -174,13 +174,17 @@ void fillProcesses(
 {
    for (unsigned int i=0; i<cfg->pnames.size(); i++)
    {
-      chains.push_back(new TChain("HltTree"));
-      chains.back()->Add(cfg->ppaths[i]+cfg->pfnames[i]);
-      //chains[i]->Print();
-      procs.push_back(new OHltTree((TTree*)chains[i],menu));
-      hltDatasets.addSample(cfg->pnames[i], (cfg->pisPhysicsSample[i]==0
-            ? RATE_SAMPLE
-            : PHYSICS_SAMPLE)); //SAK
+     chains.push_back(new TChain("HltTree"));
+     for (unsigned int j=0; j<cfg->pfnames.size(); j++)
+       {
+	 //chains.back()->Add(cfg->ppaths[i]+cfg->pfnames[i]);
+	 chains.back()->Add(cfg->ppaths[j]+cfg->pfnames[j]);
+       }
+     //chains[i]->Print();
+     procs.push_back(new OHltTree((TTree*)chains[i],menu));
+     hltDatasets.addSample(cfg->pnames[i], (cfg->pisPhysicsSample[i]==0
+					    ? RATE_SAMPLE
+					    : PHYSICS_SAMPLE)); //SAK
    }
 }
 

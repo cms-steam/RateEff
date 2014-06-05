@@ -13,7 +13,6 @@ OHltConfig::OHltConfig(TString cfgfile, OHltMenu *omenu)
    nPrintStatusEvery = 10000;
    isRealData= false;
    isCounts= false;
-   useINPATH_INFILE = false;
    isMCPUreweight = false;
    MCPUfile = "";
    DataPUfile = "";
@@ -64,7 +63,6 @@ OHltConfig::OHltConfig(TString cfgfile, OHltMenu *omenu)
       cfg.lookupValue("run.isRealData",isRealData);
       omenu->SetIsRealData(isRealData);
       cfg.lookupValue("run.isCounts",isCounts);
-      cfg.lookupValue("run.useINPATH_INFILE",useINPATH_INFILE);
       cfg.lookupValue("run.isMCPUreweight",isMCPUreweight);
       cfg.lookupValue("run.MCPUfile",stmp); MCPUfile = TString(stmp);
       cfg.lookupValue("run.DataPUfile",stmp); DataPUfile = TString(stmp);
@@ -107,6 +105,10 @@ OHltConfig::OHltConfig(TString cfgfile, OHltMenu *omenu)
       Setting &p = cfg.lookup("process.names");
       const int nproc = (const int)p.getLength();
       //cout << nproc << endl;
+      if (nproc > 1) {
+	cout << "DANGER: at the moment more than one name is not supported. You can change OHltConfig.cpp and OHltRateEff.cpp if you know what you're doing." << endl;
+	return;
+      }
       Setting &isPS = cfg.lookup("process.isPhysicsSample");
       Setting &xs = cfg.lookup("process.sigmas");
       Setting &pa = cfg.lookup("process.paths");
@@ -114,24 +116,27 @@ OHltConfig::OHltConfig(TString cfgfile, OHltMenu *omenu)
       Setting &muc = cfg.lookup("process.doMuonCuts");
       Setting &ec = cfg.lookup("process.doElecCuts");
 
+      const int nfiles = (const int)fn.getLength();
+
       for (int i=0;i<nproc;i++)
       {
          stmp = p[i];
          pnames.push_back(TString(stmp));
          itmp = isPS[i];
          pisPhysicsSample.push_back(itmp);
-	 if (useINPATH_INFILE == true) stmp = getenv("INPATH");
-         else stmp = pa[i];
+	 stmp = pa[i];
          // LA add trailing slash to directories if missing
          string ppath = stmp;
          string lastChar=ppath.substr(ppath.size()-1);
          if (lastChar.compare("/") != 0 ) ppath.append("/");
 
-
-         ppaths.push_back(TString(ppath));
-	 if (useINPATH_INFILE == true) stmp = getenv("INFILE");
-         else stmp = fn[i];
-         pfnames.push_back(TString(stmp));
+	 for (int j=0;j<nfiles;j++)
+	   {
+	     ppaths.push_back(TString(ppath));
+	     //stmp = fn[i];  
+	     stmp = fn[j];  
+	     pfnames.push_back(TString(stmp));
+	   }
          ftmp = xs[i];
          psigmas.push_back(ftmp);
          btmp = muc[i];
@@ -143,11 +148,14 @@ OHltConfig::OHltConfig(TString cfgfile, OHltMenu *omenu)
 
       for (int i=0;i<nproc;i++)
       { //RR
-
          printf("Name [%d]: %s\n",i,pnames.at(i).Data());
          printf("Path [%d]: %s\n",i,ppaths.at(i).Data());
-         printf("File [%d]: %s\n",i,pfnames.at(i).Data());
       }
+      for (int i=0;i<nfiles;i++)
+	{
+         printf("File [%d]: %s\n",i,pfnames.at(i).Data());
+	}
+	  
       /**********************************/
 
       /**** Branch Selections ****/
@@ -424,16 +432,19 @@ void OHltConfig::print()
    cout << endl;
    cout << "Number of Samples: "<<pnames.size()<< endl;
    cout << "**********************************" << endl;
-   for (unsigned int i=0; i<pnames.size(); i++)
-   {
-      cout << "pnames["<<i<<"]: " << pnames[i] << endl;
-      cout << "ppaths["<<i<<"]: " << ppaths[i] << endl;
-      cout << "pfnames["<<i<<"]: " << pfnames[i] << endl;
-      cout << "psigmas["<<i<<"]: " << psigmas[i] << endl;
-      cout << "pdomucuts["<<i<<"]: " << pdomucuts[i] << endl;
-      cout << "pdoecuts["<<i<<"]: " << pdoecuts[i] << endl;
-      cout << endl;
+   for (unsigned int i=0; i<pnames.size(); i++) 
+     {
+       cout << "pnames["<<i<<"]: " << pnames[i] << endl;
+       cout << "ppaths["<<i<<"]: " << ppaths[i] << endl;
+       cout << "psigmas["<<i<<"]: " << psigmas[i] << endl;
+       cout << "pdomucuts["<<i<<"]: " << pdomucuts[i] << endl;
+       cout << "pdoecuts["<<i<<"]: " << pdoecuts[i] << endl;
+       cout << endl;
    }
+   for (unsigned int i=0; i<pfnames.size(); i++)
+     {
+       cout << "pfnames["<<i<<"]: " << pfnames[i] << endl;
+     }
    cout << "**********************************" << endl;
 
    unsigned int nrunLumiList = runLumiblockList.size();

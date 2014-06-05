@@ -2,8 +2,6 @@ import math,ROOT,sys,os
 from ROOT import gROOT, TFile, TChain, TTree, TH1F, TF1,SetOwnership
 
 #BaseDirectory="/uscmst1b_scratch/lpc1/lpctrig/ingabu/TMD/HLT"
-#OutDir="resultsNew"
-# BaseDirectory="/uscmst1b_scratch/lpc1/lpctrig/apana/HLT/MCRates/counts8TeV_25ns"
 BaseDirectory="./"
 
 RootS="13TeV"
@@ -12,20 +10,21 @@ RootS="13TeV"
 ## BS="50ns"
 BS="25ns"
 
+#vsn = '700'
+vsn = '62X'
+
 # ilumi = 5.5e33  # run 196532
 # ilumi = 5.3e33  # run 207884
 # ilumi = 3.12e33 # run 207889
 # ilumi = 1.7e34 # projected lumi for 13 TeV
 ilumi = 1.1e34 # projected lumi for 13 TeV, 25 ns bunch spacing
 
-## DataSets=["noprescl"]
-## DataSets=["BJetPlusX"]
 ## DataSets=["BJetPlusX", "BTag", "DoubleElectron", "DoubleMu", "DoublePhoton", "DoublePhotonHighPt", "ElectronHad", "HTMHT", "JetHT", "MET", "MuEG", "MuHad", "MuOnia", "MultiJet", "PhotonHad", "SingleElectron", "SingleMu", "SinglePhoton", "Tau", "TauPlusX"]
-DataSets=["BTag", "DoubleElectron", "DoubleMu", "DoublePhoton", "DoublePhotonHighPt", "ElectronHad", "HTMHT", "JetHT", "MET", "MuEG", "MuHad", "MuOnia", "MultiJet", "PhotonHad", "SingleElectron", "SingleMu", "SinglePhoton", "Tau", "TauPlusX"]
+DataSets=['noprescl', 'BJetPlusX', 'BTag', 'DoubleElectron', 'DoubleMu', 'DoublePhoton', 'DoublePhotonHighPt', 'ElectronHad', 'HTMHT', 'JetHT', 'MET', 'MuEG', 'MuHad', 'MuOnia', 'MultiJet', 'PhotonHad', 'SingleElectron', 'SingleMu', 'SinglePhoton', 'Tau', 'TauPlusX']
 
 ## theDate="20131029"
 ## theDate="20131128"
-theDate="20140429"
+theDate="20140604"
 
 
 mfillb = 3564.
@@ -41,9 +40,9 @@ else:
 
 collrate = (nfillb/mfillb)/xtime
 
-OutDir=os.path.join("resultsByDS_no15to30" + "_" + RootS +"_"+ theDate,str(ilumi))
+OutDir=os.path.join("resultsByDS" + "_" + RootS +"_"+ theDate + '_no15to30_' + vsn,str(ilumi))
 
-from CrossSections import crossSections8TeV, crossSections13TeV
+from CrossSections import crossSections13TeV
 
 ## ========================================================================= ##
 
@@ -226,24 +225,25 @@ if __name__ == '__main__':
     for DS in DataSets:
         print "Running DS:", DS
 
-        OutFile="hltmenu_"+RootS+"_"+BS+"_combinedRate_"+str(ilumi)+"_"+DS+".root"
+        OutFile="hltmenu_"+RootS+"_"+BS+"_combinedRate_"+str(ilumi)+"_"+DS+ '_' + vsn + ".root"
 
         theRateHists=[]
         theSamples=crossSections.keys()
         for Sample in theSamples:
 
             ## print crossSections[Sample][1],crossSections[Sample][1].find("QCD_Pt-15to30Out")
-            if crossSections[Sample][1].find("QCD_Pt-15to30Out")==0 or crossSections[Sample][1].find("QCD_Pt-15to20")==0:
+            #if crossSections[Sample][1].find("QCD_Pt-15to30_antiEMOut")==0 or crossSections[Sample][1].find("QCD_Pt-15to20")==0:
+            if crossSections[Sample][1].find("QCD_Pt-5to10_antiEMOut_")==0  or crossSections[Sample][1].find("QCD_Pt-10to15_antiEMOut_")==0 or crossSections[Sample][1].find("QCD_Pt-15to30_antiEMOut_")==0 or crossSections[Sample][1].find("QCD_Pt-5to10_EMEnrichedOut_")==0 or crossSections[Sample][1].find("QCD_Pt-10to20_EMEnrichedOut_")==0 or crossSections[Sample][1].find("QCD_Pt-800to1000_MuEnrichedPt5_nofiltOut_")==0 or crossSections[Sample][1].find("QCD_Pt-1000_MuEnrichedPt5_nofiltOut_")==0 :
                 continue
             print ""
             
             outDir=os.path.join(OutDir,crossSections[Sample][1])
-            outDir=outDir + BS + "_" + RootS + "_DS_" + DS
+            outDir=outDir + BS + "_" + RootS + "_DS_" + DS + '_' + vsn
             if not os.path.isdir(outDir):
                 os.makedirs(outDir)
 
             inDir=os.path.join(BaseDirectory,crossSections[Sample][1])
-            inDir=inDir + BS + "_" + RootS + "_DS_" + DS  + "_" + theDate
+            inDir=inDir + BS + "_" + RootS + "_DS_" + DS  + "_" + theDate + '_' + vsn
             if not os.path.isdir(inDir):
                 print "Input directory    " + inDir + "   does not exist -- Exiting"
                 print Sample

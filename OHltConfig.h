@@ -39,7 +39,6 @@ public:
    int nPrintStatusEvery;
    bool isRealData;
    bool isCounts;
-   bool useINPATH_INFILE;
    bool isMCPUreweight;
    TString MCPUfile;
    TString DataPUfile;
