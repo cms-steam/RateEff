@@ -1,0 +1,22 @@
+import os 
+
+os.system('python SummaryofRates.py MET')
+os.system('python SummaryofRates.py SingleElectron')
+os.system('python SummaryofRates.py SingleMu')
+os.system('python SummaryofRates.py HTMHT')
+os.system('python SummaryofRates.py DoublePhoton')
+os.system('python SummaryofRates.py DoubleMu')
+os.system('python SummaryofRates.py SinglePhoton')
+os.system('python SummaryofRates.py JetHT')
+os.system('python SummaryofRates.py DoubleElectron')
+os.system('python SummaryofRates.py PhotonHad')
+os.system('python SummaryofRates.py MultiJet')
+os.system('python SummaryofRates.py MuHad')
+os.system('python SummaryofRates.py MuOnia')
+os.system('python SummaryofRates.py BTag')
+os.system('python SummaryofRates.py ElectronHad')
+os.system('python SummaryofRates.py TauPlusX')
+os.system('python SummaryofRates.py Tau')
+os.system('python SummaryofRates.py BJetPlusX')
+os.system('python SummaryofRates.py MuEG')
+
