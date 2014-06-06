@@ -41,8 +41,10 @@ for b in range(len(Bins)):
             DOMUCUTS = 'true'
             BASENAME1 = '/eos/uscms/store/user/lpctrig/ingabu/TMD/PU20bx25/' + Bins[b] + '_TuneZ2star_' + rs + '_pythia8/'
         elif (Bins[b] == 'WToMuNu' or Bins[b] == 'WToENu' or Bins[b] == 'DYToEE' or Bins[b] == 'DYToMuMu'):
+            DOMUCUTS = 'false'
             BASENAME1 = '/eos/uscms/store/user/lpctrig/ingabu/TMD/PU20bx25/' + Bins[b]+ '_Tune4C_' + rs + '-pythia8/'
         else:
+            DOMUCUTS = 'false'
             BASENAME1 = '/eos/uscms/store/user/lpctrig/ingabu/TMD/PU20bx25/' + Bins[b] + '_TuneZ2star_' + rs + '_pythia8/'
 
 
