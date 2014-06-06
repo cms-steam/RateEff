@@ -46,7 +46,7 @@ void OHltTree::Loop(
    }
    cout<<"Succeeded initialising OHltTree. nEntries: "<< nTotEnt <<endl;
 
-   if (cfg->nEntries <= 0)
+   if (cfg->nEntries <= 0 || (nTotEnt < cfg->nEntries))
       nentries = nTotEnt;
    else
       nentries= cfg->nEntries;
