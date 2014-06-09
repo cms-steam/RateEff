@@ -12,7 +12,7 @@ bs = '25ns'
 vsn = '62X'
 #vsn = '700'
 rs = '13TeV'
-theDate = '20140604'
+theDate = '20140606'
 
 #Bins = ['QCD_Pt-20to30_MuEnrichedPt5_antiEM']
 #Bins = ['QCD_Pt-5to10_antiEM', 'QCD_Pt-10to15_antiEM', 'QCD_Pt-15to30_antiEM', 'QCD_Pt-30to50_antiEM', 'QCD_Pt-50to80_antiEM', 'QCD_Pt-80to120_antiEM', 'QCD_Pt-120to170_antiEM', 'QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt', 'QCD_Pt-1000to1400_nofilt', 'QCD_Pt-1400to1800_nofilt', 'QCD_Pt-1800_nofilt']
@@ -22,7 +22,7 @@ theDate = '20140604'
 Bins = ['QCD_Pt-15to30_antiEM', 'QCD_Pt-30to50_antiEM', 'QCD_Pt-50to80_antiEM', 'QCD_Pt-80to120_antiEM', 'QCD_Pt-120to170_antiEM', 'QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt', 'QCD_Pt-1000to1400_nofilt', 'QCD_Pt-1400to1800_nofilt', 'QCD_Pt-1800_nofilt', 'QCD_Pt-10to20_EMEnriched', 'QCD_Pt-20to30_EMEnriched', 'QCD_Pt-30to80_EMEnriched', 'QCD_Pt-80to170_EMEnriched', 'QCD_Pt-15to20_MuEnrichedPt5_antiEM', 'QCD_Pt-20to30_MuEnrichedPt5_antiEM', 'QCD_Pt-30to50_MuEnrichedPt5_antiEM', 'QCD_Pt-50to80_MuEnrichedPt5_antiEM', 'QCD_Pt-80to120_MuEnrichedPt5_antiEM', 'QCD_Pt-120to170_MuEnrichedPt5_antiEM', 'QCD_Pt-170to300_MuEnrichedPt5_nofilt', 'QCD_Pt-300to470_MuEnrichedPt5_nofilt', 'QCD_Pt-470to600_MuEnrichedPt5_nofilt', 'QCD_Pt-600to800_MuEnrichedPt5_nofilt', 'WToMuNu', 'WToENu', 'DYToEE', 'DYToMuMu']
 
 DS = ['noprescl', 'BJetPlusX', 'BTag', 'DoubleElectron', 'DoubleMu', 'DoublePhoton', 'DoublePhotonHighPt', 'ElectronHad', 'HTMHT', 'JetHT', 'MET', 'MuEG', 'MuHad', 'MuOnia', 'MultiJet', 'PhotonHad', 'SingleElectron', 'SingleMu', 'SinglePhoton', 'Tau', 'TauPlusX']
-#DS = ['MultiJet']
+#DS = ['SingleMu']
 
 for b in range(len(Bins)):
 
@@ -90,6 +90,8 @@ for b in range(len(Bins)):
             subprocess.call('sed -i \'s/ABCD/' + DOMUCUTS + '/g\'' + ' ' + newDir + '/' + cfgFileNew, shell=True)
             subprocess.call('sed -i \'s/EFGH/' + DOELECUTS + '/g\'' + ' ' + newDir + '/' + cfgFileNew, shell=True)
             subprocess.call('sed -i \'s/VERSIONTAG/' + theDate + '/g\'' + ' ' + newDir + '/' + cfgFileNew, shell=True)
+
+            subprocess.call('sed -i \'s/THEMENU/' + cfgFileNew + '/g\'' + ' ' + newDir + '/' + submitFile, shell=True)
 
             os.chdir(newDir)
 

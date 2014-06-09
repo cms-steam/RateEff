@@ -35,7 +35,7 @@ set whichproc = $argv[6]
 
 
 ## setenv CFG $workDir/hltmenu_prescales.cfg
-setenv CFG $workDir/hltmenu_$whichproc.cfg
+setenv CFG hltmenu_$whichproc.cfg
 
 echo -n " ---- Configuration file ------------"
 echo 
