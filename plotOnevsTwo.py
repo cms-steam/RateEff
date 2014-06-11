@@ -6,7 +6,7 @@ import sys,string,math,os,ROOT
 
 from array import array
 
-sys.path.append(os.path.join(os.environ.get("HOME"),'rootmacros'))
+sys.path.append('rootmacros')
 from myPyRootSettings import prepPlot
 from myPyRootMacros import GetHist, PrepLegend, drawErrorBarsUser, DrawText
 
@@ -201,8 +201,8 @@ if __name__ == '__main__':
     #    sys.exit() 
 
     gROOT.Reset()
-    ## gROOT.SetStyle("MyStyle");    
-    gROOT.SetStyle("tdrStyle");    
+    gROOT.SetStyle("Plain");    
+    #gROOT.SetStyle("tdrStyle");    
     gStyle.SetOptLogy(0);
     gStyle.SetPalette(1);
     gStyle.SetOptTitle(0);
