@@ -83,7 +83,8 @@ crossSections13TeV={
     
     }
 
-## Use this list if you only ran hlt_nofilter.py when making some of your ntuples.
+## Use this list if you ran hlt_nofilter.py when making all of your ntuples and
+## you don't plan to combine QCD MC with lepton enriched QCD MC.
 #crossSections13TeV={
 #    ## QCD Cross sections
 #    'QCD5to10'    :(80710000000.,"QCD_Pt-5to10_antiEMOut_"),  
@@ -101,27 +102,6 @@ crossSections13TeV={
 #    'QCD1000to1400':(8.975,"QCD_Pt-1000to1400_nofiltOut_"),
 #    'QCD1400to1800':(0.8975,"QCD_Pt-1400to1800_nofiltOut_"),
 #    'QCD1800'      :(0.737844,"QCD_Pt-1800_nofiltOut_"),
-#     #EM Enriched cross sections    
-#    #the 2nd number is the EM filtering efficiency you can get from McM website
-#    'EMEnr5to10'    :(80710000000.*0.024,"QCD_Pt-5to10_EMEnrichedOut_"),
-#    'EMEnr10to20'    :(8838000000.*0.143,"QCD_Pt-10to20_EMEnrichedOut_"),
-#    'EMEnr20to30'    :(677300000.*0.007,"QCD_Pt-20to30_EMEnrichedOut_"),
-#    'EMEnr30to80'    :(185900000.*0.056,"QCD_Pt-30to80_EMEnrichedOut_"),
-#    'EMEnr80to170'   :(3529000.*0.158,"QCD_Pt-80to170_EMEnrichedOut_"),
-#     #Mu Enriched cross sections
-#    #the 2nd number is the MuEnriched filtering efficiency you can get from McM website
-#    'MuEnr15to20'    :(1576000000.*0.0039,"QCD_Pt-15to20_MuEnrichedPt5_antiEMOut_"),
-#    'MuEnr20to30'    :(675300000.*0.0065,"QCD_Pt-20to30_MuEnrichedPt5_antiEMOut_"),
-#    'MuEnr30to50'    :(164400000.*0.0122,"QCD_Pt-30to50_MuEnrichedPt5_antiEMOut_"),
-#    'MuEnr50to80'    :(21930000.*0.0218,"QCD_Pt-50to80_MuEnrichedPt5_antiEMOut_"),
-#    'MuEnr80to120'   :(3000000.*0.0395,"QCD_Pt-80to120_MuEnrichedPt5_antiEMOut_"),
-#    'MuEnr120to170'   :(493200.*0.0473,"QCD_Pt-120to170_MuEnrichedPt5_antiEMOut_"),
-#    'MuEnr170to300'   :(12030.*0.0676,"QCD_Pt-170to300_MuEnrichedPt5_nofiltOut_"),
-#    'MuEnr300to470'   :(7475.*0.0864,"QCD_Pt-300to470_MuEnrichedPt5_nofiltOut_"),
-#    'MuEnr470to600'   :(587.1*0.1024,"QCD_Pt-470to600_MuEnrichedPt5_nofiltOut_"),
-#    'MuEnr600to800'   :(167.*0.0996,"QCD_Pt-600to800_MuEnrichedPt5_nofiltOut_"),
-#    'MuEnr800to1000'   :(28.25*0.1033,"QCD_Pt-800to1000_MuEnrichedPt5_nofiltOut_"),
-#    'MuEnr1000'   :(8.975*0.1097,"QCD_Pt-1000_MuEnrichedPt5_nofiltOut_"),
 #     #W and Z cross sections
 #    'WToENu'         :(16000.,"WToENuOut_"),
 #    'WToMuNu'        :(16100.,"WToMuNuOut_"),
