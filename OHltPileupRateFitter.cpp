@@ -170,7 +170,8 @@ void OHltPileupRateFitter::fitForPileup(
   TGraphErrors* vTotalRebinnedRateGraph = new TGraphErrors(rebinnedBins,&vTotalLumiRebinned[0], 
 							   &vTotalRateRebinned[0], &vTotalLumiRebinnedError[0], 
 							   &vTotalRateRebinnedError[0]); 
-  vTotalRebinnedRateGraph->SetTitle("Total rate (rebinned)"); 
+  if (thecfg->isCounts) vTotalRebinnedRateGraph->SetTitle("Total count (rebinned)"); 
+  else vTotalRebinnedRateGraph->SetTitle("Total rate (rebinned)"); 
 
   // Individual rates
   vector <TGraphErrors*> vGraphRebinned;
@@ -238,7 +239,12 @@ void OHltPileupRateFitter::fitForPileup(
   cout<<setprecision(3);
 
   cout << "\n";
-  cout << "Pileup corrected Trigger Rates [Hz], using " << model << " fit extrapolation to L=" << targetLumi << ": " << "\n";
+  if (thecfg->isCounts) {
+    cout << "Pileup corrected Trigger Counts, using " << model << " fit extrapolation to L=" << targetLumi << ": " << "\n";
+  }
+  else {
+    cout << "Pileup corrected Trigger Rates [Hz], using " << model << " fit extrapolation to L=" << targetLumi << ": " << "\n";
+  }
   cout << "\t(Warning: always check fit qualities!)" << endl; 
   cout
     << "         Name                       Indiv.                                 Notes \n";
@@ -286,8 +292,13 @@ void OHltPileupRateFitter::fitForPileup(
    fp2->SetLineColor(2); 
    fp2->DrawCopy("same"); 
    cout << "\n"; 
+   if (thecfg->isCounts) {
+   cout << setw(60) << "TOTAL COUNT (REBINNED): " << setw(5) << fp2->Eval(targetLumi); 
+   }
+   else {
    cout << setw(60) << "TOTAL RATE (REBINNED): " << setw(5) << fp2->Eval(targetLumi) << " Hz"; 
- 
+   }
+
    double pchi2totalrebinned = TMath::Prob(fp2->GetChisquare(),fp2->GetNDF()); 
    if(pchi2totalrebinned>0.01) 
      cout<<endl; 

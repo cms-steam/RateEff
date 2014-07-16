@@ -64,7 +64,8 @@ void OHltRatePrinter::printRatesASCII(OHltConfig *cfg, OHltMenu *menu)
    cout<<setprecision(3);
 
    cout << "\n";
-   cout << "Trigger Rates [Hz] : " << "\n";
+   if (cfg->isCounts) cout << "Trigger Counts : " << "\n";
+   else cout << "Trigger Rates [Hz] : " << "\n";
    cout
          << "         Name                       Prescale (HLT*L1)   Indiv.          Pure   Cumulative\n";
    cout
@@ -178,7 +179,9 @@ void OHltRatePrinter::printRatesASCII(OHltConfig *cfg, OHltMenu *menu)
 
    cumulRateErr = sqrt(cumulRateErr);
    cout << "\n";
-   cout << setw(60) << "TOTAL RATE : " << setw(5) << cumulRate << " +- "
+   if (cfg->isCounts) cout << setw(60) << "TOTAL COUNT : " << setw(5) << cumulRate << " +- "
+         << cumulRateErr << "\n";
+   else cout << setw(60) << "TOTAL RATE : " << setw(5) << cumulRate << " +- "
          << cumulRateErr << " Hz" << "\n";
    cout
          << "----------------------------------------------------------------------------------------------\n";
@@ -218,8 +221,14 @@ void OHltRatePrinter::printHltRatesTwiki(OHltConfig *cfg, OHltMenu *menu)
    outFile << " | *L1 condition*";
    outFile << " | *L1  Prescale*";
    outFile << " | *HLT Prescale*";
-   outFile << " | *HLT Rate [Hz]*";
-   outFile << " | *Total Rate [Hz]*";
+   if (cfg->isCounts) {
+     outFile << " | *HLT Count*";
+     outFile << " | *Total Count*";
+   }
+   else {
+     outFile << " | *HLT Rate [Hz]*";
+     outFile << " | *Total Rate [Hz]*";
+   }
    outFile << " | *Avg. Size [MB]*";
    outFile << " | *Total Throughput [MB/s]* |" << endl;
 
@@ -345,9 +354,14 @@ void OHltRatePrinter::printHltRatesTwiki(OHltConfig *cfg, OHltMenu *menu)
             << menu->GetEventsize(i) << " | " << cuThru << " | " << endl;
    }
 
-   outFile << "| *Total* " << " | *Rate (AlCa not included) [Hz]*"
-         << " | *Throughput (AlCa included) [MB/s]* |" << endl;
-
+   if (cfg->isCounts) {
+     outFile << "| *Total* " << " | *Count (AlCa not included) *"
+	     << " | *Throughput (AlCa included) [MB/s]* |" << endl;
+   }
+   else {
+     outFile << "| *Total* " << " | *Rate (AlCa not included) [Hz]*"
+	     << " | *Throughput (AlCa included) [MB/s]* |" << endl;
+   }
    outFile << "| HLT " << " | " << cuPhysRate << "+-" << sqrt(cuPhysRateErr)
          << " | " << cuThru << "+-" << sqrt(cuThruErr) << " | " << endl;
 
@@ -374,8 +388,14 @@ void OHltRatePrinter::printL1RatesTwiki(OHltConfig *cfg, OHltMenu *menu)
 
    outFile << "| *Path Name*";
    outFile << " | *L1  Prescale*";
-   outFile << " | *L1 rate [Hz]*";
-   outFile << " | *Total Rate [Hz]* |" << endl;
+   if (cfg->isCounts) {
+     outFile << " | *L1 count*";
+     outFile << " | *Total Count* |" << endl;
+   }
+   else {
+     outFile << " | *L1 rate [Hz]*";
+     outFile << " | *Total Rate [Hz]* |" << endl;
+   }
 
    double cumulRate = 0.;
    double cumulRateErr = 0.;
@@ -397,7 +417,8 @@ void OHltRatePrinter::printL1RatesTwiki(OHltConfig *cfg, OHltMenu *menu)
             << " | " << cumulRate << " |" << endl;
    }
 
-   outFile << "| *Total* " << " | *Rate [Hz]* |" << endl;
+   if (cfg->isCounts) outFile << "| *Total* " << " | *Count* |" << endl;
+   else outFile << "| *Total* " << " | *Rate [Hz]* |" << endl;
 
    outFile << "| L1 " << " | " << cumulRate << "+-" << sqrt(cumulRateErr)
          << " | " << endl;
@@ -609,16 +630,22 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu, int Nevents)
    }
    NumberToWrite->Write();
    individual->SetStats(0);
-   individual->SetYTitle("Rate (Hz)");
-   individual->SetTitle("Individual trigger rate");
+   if (cfg->isCounts) individual->SetYTitle("Count");
+   else individual->SetYTitle("Rate (Hz)");
+   if (cfg->isCounts) individual->SetTitle("Individual trigger count");
+   else individual->SetTitle("Individual trigger rate");
    cumulative->SetStats(0);
-   cumulative->SetYTitle("Rate (Hz)");
-   cumulative->SetTitle("Cumulative trigger rate");
+   if (cfg->isCounts) cumulative->SetYTitle("Count");
+   else cumulative->SetYTitle("Rate (Hz)");
+   if (cfg->isCounts) cumulative->SetTitle("Cumulative trigger count");
+   else cumulative->SetTitle("Cumulative trigger rate");
    overlap->SetStats(0);
    overlap->SetTitle("Overlap");
    unique->SetStats(0); 
-   unique->SetYTitle("Rate (Hz)"); 
-   unique->SetTitle("Unique trigger rate"); 
+   if (cfg->isCounts) unique->SetYTitle("Count");
+   else unique->SetYTitle("Rate (Hz)"); 
+   if (cfg->isCounts) unique->SetTitle("Unique trigger count"); 
+   else unique->SetTitle("Unique trigger rate"); 
    individual->Write();
    cumulative->Write();
    eventsize->Write();
@@ -628,12 +655,16 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu, int Nevents)
    NEVTS->Write();
    NLumiSec->Write();
    individualPerLS->SetStats(0);
-   individualPerLS->SetZTitle("Rate (Hz)");
-   individualPerLS->SetTitle("Individual trigger rate vs Run/LumiSection");
+   if (cfg->isCounts) individualPerLS->SetZTitle("Count");
+   else individualPerLS->SetZTitle("Rate (Hz)");
+   if (cfg->isCounts) individualPerLS->SetTitle("Individual trigger count vs Run/LumiSection");
+   else individualPerLS->SetTitle("Individual trigger rate vs Run/LumiSection");
    individualPerLS->Write();
    totalPerLS->SetStats(0);
-   totalPerLS->SetZTitle("Rate (Hz)");
-   totalPerLS->SetTitle("Total trigger rate vs Run/LumiSection");
+   if (cfg->isCounts) totalPerLS->SetZTitle("Count");
+   else totalPerLS->SetZTitle("Rate (Hz)");
+   if (cfg->isCounts) totalPerLS->SetTitle("Total trigger count vs Run/LumiSection");
+   else totalPerLS->SetTitle("Total trigger rate vs Run/LumiSection");
    totalPerLS->Write();
    totalprescalePerLS->SetStats(0);
    totalprescalePerLS->SetZTitle("Prescale");
@@ -777,12 +808,22 @@ void OHltRatePrinter::printL1RatesTex(OHltConfig *cfg, OHltMenu *menu)
    outFile
          << "\\begin{tabular}{c} {\\bf L1} \\\\ {\\bf Prescale} \\end{tabular} & "
          << endl;
-   outFile
-         << "\\begin{tabular}{c} {\\bf L1 Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} & "
-         << endl;
-   outFile
-         << "\\begin{tabular}{c} {\\bf Total Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} \\\\ \\hline"
-         << endl;
+   if (cfg->isCounts) {
+     outFile
+       << "\\begin{tabular}{c} {\\bf L1 Count} \\\\ {\\bf $[$$]$} \\end{tabular} & "
+       << endl;
+     outFile
+       << "\\begin{tabular}{c} {\\bf Total Count} \\\\ {\\bf $[$$]$} \\end{tabular} \\\\ \\hline"
+       << endl;
+   }
+   else {
+     outFile
+       << "\\begin{tabular}{c} {\\bf L1 Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} & "
+       << endl;
+     outFile
+       << "\\begin{tabular}{c} {\\bf Total Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} \\\\ \\hline"
+       << endl;
+   }
    outFile << "\\endfirsthead " << endl;
 
    outFile
@@ -792,12 +833,22 @@ void OHltRatePrinter::printL1RatesTex(OHltConfig *cfg, OHltMenu *menu)
    outFile
          << "\\begin{tabular}{c} {\\bf L1} \\\\ {\\bf Prescale} \\end{tabular} & "
          << endl;
-   outFile
-         << "\\begin{tabular}{c} {\\bf L1 Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} & "
-         << endl;
-   outFile
-         << "\\begin{tabular}{c} {\\bf Total Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} \\\\ \\hline"
-         << endl;
+   if (cfg->isCounts) {
+     outFile
+       << "\\begin{tabular}{c} {\\bf L1 Count} \\\\ {\\bf $[$$]$} \\end{tabular} & "
+       << endl;
+     outFile
+       << "\\begin{tabular}{c} {\\bf Total Count} \\\\ {\\bf $[$$]$} \\end{tabular} \\\\ \\hline"
+       << endl;
+   }
+   else {
+     outFile
+       << "\\begin{tabular}{c} {\\bf L1 Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} & "
+       << endl;
+     outFile
+       << "\\begin{tabular}{c} {\\bf Total Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} \\\\ \\hline"
+       << endl;
+   }
    outFile << "\\endhead " << endl;
 
    outFile
@@ -835,10 +886,18 @@ void OHltRatePrinter::printL1RatesTex(OHltConfig *cfg, OHltMenu *menu)
    }
 
    cumulRateErr = sqrt(cumulRateErr);
-   outFile
+   if (cfg->isCounts) {
+     outFile
+         << "\\hline \\multicolumn{2}{|l|}{\\bf \\boldmath Total L1 count} & \\multicolumn{2}{|r|} {\\bf "
+         << cumulRate << " $\\pm$ " << cumulRateErr << "} \\\\  \\hline"
+         << endl;
+   }
+   else {
+     outFile
          << "\\hline \\multicolumn{2}{|l|}{\\bf \\boldmath Total L1 rate (Hz)} & \\multicolumn{2}{|r|} {\\bf "
          << cumulRate << " $\\pm$ " << cumulRateErr << "} \\\\  \\hline"
          << endl;
+   }
    outFile << "\\end{longtable}" << endl;
    outFile << "\\end{footnotesize}" << endl;
    outFile << "\\clearpage" << endl;
@@ -893,12 +952,22 @@ void OHltRatePrinter::printHltRatesTex(OHltConfig *cfg, OHltMenu *menu)
    outFile
          << "\\begin{tabular}{c} {\\bf HLT} \\\\ {\\bf Prescale} \\end{tabular} & "
          << endl;
-   outFile
-         << "\\begin{tabular}{c} {\\bf HLT Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} & "
-         << endl;
-   outFile
-         << "\\begin{tabular}{c} {\\bf Total Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} &"
-         << endl;
+   if (cfg->isCounts) {
+     outFile
+       << "\\begin{tabular}{c} {\\bf HLT Count} \\\\ {\\bf $[$$]$} \\end{tabular} & "
+       << endl;
+     outFile
+       << "\\begin{tabular}{c} {\\bf Total Count} \\\\ {\\bf $[$$]$} \\end{tabular} &"
+       << endl;
+   }
+   else {
+     outFile
+       << "\\begin{tabular}{c} {\\bf HLT Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} & "
+       << endl;
+     outFile
+       << "\\begin{tabular}{c} {\\bf Total Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} &"
+       << endl;
+   }
    outFile
          << "\\begin{tabular}{c} {\\bf Avg. Size} \\\\ {\\bf $[$MB$]$} \\end{tabular} & "
          << endl;
@@ -920,12 +989,22 @@ void OHltRatePrinter::printHltRatesTex(OHltConfig *cfg, OHltMenu *menu)
    outFile
          << "\\begin{tabular}{c} {\\bf HLT} \\\\ {\\bf Prescale} \\end{tabular} & "
          << endl;
-   outFile
-         << "\\begin{tabular}{c} {\\bf HLT Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} & "
-         << endl;
-   outFile
-         << "\\begin{tabular}{c} {\\bf Total Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} &"
-         << endl;
+   if (cfg->isCounts) {
+     outFile
+       << "\\begin{tabular}{c} {\\bf HLT Count} \\\\ {\\bf $[$$]$} \\end{tabular} & "
+       << endl;
+     outFile
+       << "\\begin{tabular}{c} {\\bf Total Count} \\\\ {\\bf $[$$]$} \\end{tabular} &"
+       << endl;
+   }
+   else {
+     outFile
+       << "\\begin{tabular}{c} {\\bf HLT Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} & "
+       << endl;
+     outFile
+       << "\\begin{tabular}{c} {\\bf Total Rate} \\\\ {\\bf $[$Hz$]$} \\end{tabular} &"
+       << endl;
+   }
    outFile
          << "\\begin{tabular}{c} {\\bf Avg. Size} \\\\ {\\bf $[$MB$]$} \\end{tabular} & "
          << endl;
@@ -1059,18 +1138,34 @@ void OHltRatePrinter::printHltRatesTex(OHltConfig *cfg, OHltMenu *menu)
    physCutThruErr = sqrt(physCutThruErr);
    cuPhysRateErr = sqrt(cuPhysRateErr);
 
-   outFile
-         << "\\hline \\multicolumn{6}{|l|}{\\bf \\boldmath Total HLT Physics rate (Hz), AlCa triggers not included } &  \\multicolumn{2}{|r|} { \\bf "
-         << cuPhysRate << " $\\pm$ " << cuPhysRateErr << "} \\\\  \\hline"
-         << endl;
+   if (cfg->isCounts) {
+     outFile
+       << "\\hline \\multicolumn{6}{|l|}{\\bf \\boldmath Total HLT Physics count, AlCa triggers not included } &  \\multicolumn{2}{|r|} { \\bf "
+       << cuPhysRate << " $\\pm$ " << cuPhysRateErr << "} \\\\  \\hline"
+       << endl;
+   }
+   else {
+     outFile
+       << "\\hline \\multicolumn{6}{|l|}{\\bf \\boldmath Total HLT Physics rate (Hz), AlCa triggers not included } &  \\multicolumn{2}{|r|} { \\bf "
+       << cuPhysRate << " $\\pm$ " << cuPhysRateErr << "} \\\\  \\hline"
+       << endl;
+   }
    outFile
          << "\\hline \\multicolumn{6}{|l|}{\\bf \\boldmath Total Physics HLT throughput (MB/s), AlCa triggers not included }  & \\multicolumn{2}{|r|} { \\bf   "
          << physCutThru<< " $\\pm$ " << physCutThruErr << "} \\\\  \\hline"
          << endl;
-   outFile
-         << "\\hline \\multicolumn{6}{|l|}{\\bf \\boldmath Total HLT rate (Hz) }  &  \\multicolumn{2}{|r|} { \\bf "
-         << cumulRate << " $\\pm$ " << cumulRateErr << "} \\\\  \\hline"
-         << endl;
+   if (cfg->isCounts) {
+     outFile
+       << "\\hline \\multicolumn{6}{|l|}{\\bf \\boldmath Total HLT count }  &  \\multicolumn{2}{|r|} { \\bf "
+       << cumulRate << " $\\pm$ " << cumulRateErr << "} \\\\  \\hline"
+       << endl;
+   }
+   else {
+     outFile
+       << "\\hline \\multicolumn{6}{|l|}{\\bf \\boldmath Total HLT rate (Hz) }  &  \\multicolumn{2}{|r|} { \\bf "
+       << cumulRate << " $\\pm$ " << cumulRateErr << "} \\\\  \\hline"
+       << endl;
+   }
    outFile
          << "\\hline \\multicolumn{6}{|l|}{\\bf \\boldmath Total HLT throughput (MB/s) } &  \\multicolumn{2}{|r|} { \\bf  "
          << cuThru << " $\\pm$ " << cuThruErr << "} \\\\  \\hline" << endl;
