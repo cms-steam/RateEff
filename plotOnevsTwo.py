@@ -6,7 +6,7 @@ import sys,string,math,os,ROOT
 
 from array import array
 
-sys.path.append('rootmacros')
+sys.path.append(os.path.join(os.environ.get("HOME"),'rootmacros'))
 from myPyRootSettings import prepPlot
 from myPyRootMacros import GetHist, PrepLegend, drawErrorBarsUser, DrawText
 
@@ -24,8 +24,10 @@ vsn = '700'
 #vsn = '62X'
 
 if not UseLowPTQCD:
-    INPUTDIR1="resultsByDS_13TeV_20140602_no15to30_" + vsn + "/1.1e+34"
+    #INPUTDIR1="resultsByDS_13TeV_20140623JustQCD_no15to30_" + vsn + "onlyQCD/1.1e+34"
+    INPUTDIR1="resultsByDS_13TeV_20140609_no15to30_" + vsn + "NewXSec/1.1e+34"
     INPUTDIR2="resultsByDS_no15to30_13TeV_20131029/1.1e+34"
+    #INPUTDIR2="resultsByDS_13TeV_20140609_no15to30_" + vsn + "/1.1e+34"
     if not UseEnriched:
         INPUTDIR1='resultsByDS_13TeV_20140602_onlyQCD30_' + vsn
         INPUTDIR2="resultsByDS_no15to30_NoEnrichedMC_20131128"
@@ -47,6 +49,7 @@ else:
     #WhichDS="SingleMu"
     #WhichDS="HTMHT"
     #WhichDS="DoublePhoton"
+    #WhichDS="DoublePhotonHighPt"
     #WhichDS="DoubleMu"
     #WhichDS="SinglePhoton"
 
@@ -63,9 +66,10 @@ else:
 
 
     #WhichDS="TauPlusX"
-    WhichDS="Tau"
-    #WhichDS="BJetPlusX"
+    #WhichDS="Tau"
+    WhichDS="BJetPlusX"
     #WhichDS="MuEG"
+    #WhichDS="noprescl"
 
     ## WhichDS="MuEGTauPlusXBJetPlusX"
 
@@ -196,13 +200,14 @@ def prep2by1Plot(cname,ctitle,wtopx=300,wtopy=20,ww=840,wh=500):
 
 if __name__ == '__main__':
 
-    #if len(sys.argv) < 2:
-    #    print 'Usage: ' + sys.argv[0] + ' whichds'
-    #    sys.exit() 
+    if DoAll and len(sys.argv) < 2:
+        print 'Usage: ' + sys.argv[0] + ' whichds'
+        sys.exit() 
 
     gROOT.Reset()
-    gROOT.SetStyle("Plain");    
+    #gROOT.SetStyle("MyStyle");    
     #gROOT.SetStyle("tdrStyle");    
+    gROOT.SetStyle("Plain");    
     gStyle.SetOptLogy(0);
     gStyle.SetPalette(1);
     gStyle.SetOptTitle(0);
@@ -224,6 +229,7 @@ if __name__ == '__main__':
     print "XXXXXXXXXXXXXXXXX -- ",INPUTDIR2, " ", INPUTDIR1
     MCFile1 = os.path.join(INPUTDIR1,"hltmenu_13TeV_25ns_combinedRate_1.1e+34_" + WhichDS + '_' + vsn + ".root")
     MCFile2 = os.path.join(INPUTDIR2,"hltmenu_13TeV_25ns_combinedRate_1.1e+34_" + WhichDS + ".root")
+    #MCFile2 = os.path.join(INPUTDIR2,"hltmenu_13TeV_25ns_combinedRate_1.1e+34_" + WhichDS + '_' + vsn + ".root")
 
     ScaleMC=1.
 
@@ -253,7 +259,7 @@ if __name__ == '__main__':
 
 
 
-    outDir="newplots/MCs13New" + vsn + "vs13Old_25"
+    outDir="newplots/MCs13New" + vsn + "vs13Old_NewXSecNoMu15_20"
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
@@ -276,7 +282,7 @@ if __name__ == '__main__':
     twfile.write(outstring + "\n")
     twfile.write("---++++!! *" + WhichDS + "*" + "\n")
 
-    twfile.write("| *Path Name* | *13 TeV MC Rate " + vsn + "[Hz] * | *13 TeV MC Rate 539 [Hz]* | *Ratio* |"+ "\n")
+    twfile.write("| *Path Name* | *13 TeV MC Rate 53X [Hz] * | *13 TeV MC Rate " + vsn + " [Hz]* | *Ratio* |"+ "\n")
 
     hist2=hist1.Clone()
     hist2.SetName("MC")   
@@ -297,46 +303,20 @@ if __name__ == '__main__':
     for itrig in range(len(Triggers)):
         trig=Triggers[itrig]
         print "------------------- ", trig, " ====================="
-        nbins=h2.GetNbinsX() 
-
-        for ibin in range(1,nbins+1):
-            label=h2.GetXaxis().GetBinLabel(ibin)
-            tstTrig=label[:label.rfind("_v")]
-            if tstTrig == trig:
-                cont=h2.GetBinContent(ibin)/ScaleMC;
-                err=h2.GetBinError(ibin)/ScaleMC;
-                outstring="13TeV Old: " +  str(ibin) + " " + label + "  Rate: " + str(cont) + " +- " + str(err)
-                print outstring
-                tfile.write(outstring + "\n")
-                
-                hist1.SetBinContent(itrig+1,cont)
-                hist1.SetBinError(itrig+1,err)
-                cum2 = h2cum.GetBinContent(ibin)
-                cum2err = h2cum.GetBinError(ibin)
-                print label, " Cum2Rate = ", cum2, " +- ", cum2err
-                if itrig==0:
-                    firstbin2=cum2
-                    firstbinerr2=cum2err
-                if itrig == len(Triggers)-1:
-                    lastbin2=cum2
-                    lastbinerr2=cum2err
-
-
         nbins=h1.GetNbinsX() 
+
         for ibin in range(1,nbins+1):
             label=h1.GetXaxis().GetBinLabel(ibin)
             tstTrig=label[:label.rfind("_v")]
             if tstTrig == trig:
                 cont=h1.GetBinContent(ibin)/ScaleMC;
                 err=h1.GetBinError(ibin)/ScaleMC;
-
                 outstring="13TeV New: " +  str(ibin) + " " + label + "  Rate: " + str(cont) + " +- " + str(err)
                 print outstring
                 tfile.write(outstring + "\n")
-                if err>=cont:
-                    err=cont
-                hist2.SetBinContent(itrig+1,cont)
-                hist2.SetBinError(itrig+1,err)
+                
+                hist1.SetBinContent(itrig+1,cont)
+                hist1.SetBinError(itrig+1,err)
                 cum1 = h1cum.GetBinContent(ibin)
                 cum1err = h1cum.GetBinError(ibin)
                 print label, " Cum1Rate = ", cum1, " +- ", cum1err
@@ -346,6 +326,32 @@ if __name__ == '__main__':
                 if itrig == len(Triggers)-1:
                     lastbin1=cum1
                     lastbinerr1=cum1err
+
+
+        nbins=h2.GetNbinsX() 
+        for ibin in range(1,nbins+1):
+            label=h2.GetXaxis().GetBinLabel(ibin)
+            tstTrig=label[:label.rfind("_v")]
+            if tstTrig == trig:
+                cont=h2.GetBinContent(ibin)/ScaleMC;
+                err=h2.GetBinError(ibin)/ScaleMC;
+
+                outstring="13TeV Old: " +  str(ibin) + " " + label + "  Rate: " + str(cont) + " +- " + str(err)
+                print outstring
+                tfile.write(outstring + "\n")
+                if err>=cont:
+                    err=cont
+                hist2.SetBinContent(itrig+1,cont)
+                hist2.SetBinError(itrig+1,err)
+                cum2 = h2cum.GetBinContent(ibin)
+                cum2err = h2cum.GetBinError(ibin)
+                print label, " Cum2Rate = ", cum2, " +- ", cum2err
+                if itrig==0:
+                    firstbin2=cum2
+                    firstbinerr2=cum2err
+                if itrig == len(Triggers)-1:
+                    lastbin2=cum2
+                    lastbinerr2=cum2err
         print " "
 
     print "firstbin1 ", firstbin1, " lastbin1 ", lastbin1
@@ -373,45 +379,49 @@ if __name__ == '__main__':
     ## CCLA Tuning
     if WhichDS == "BTag":
         pass
-    elif WhichDS == "BJetPlusX":
-        lmargin=0.58
+    if WhichDS == "BJetPlusX":
+        lmargin=0.58; rmax=2.
     elif WhichDS == "DoublePhoton":
-        lmargin=0.725; labelsz=0.028; rmax=6.
+        lmargin=0.725; labelsz=0.028; rmax=4.
+    elif WhichDS == "DoublePhotonHighPt":
+        lmargin=0.425; labelsz=0.028; rmax=3.
     elif WhichDS == "MuEG":
-        lmargin=0.55
+        lmargin=0.55; rmax=3.
     elif WhichDS == "MuOnia":
-        pass
+        rmax=4.
     elif WhichDS == "TauPlusX":
-        lmargin=0.76; labelsz=0.04
+        lmargin=0.76; labelsz=0.04; rmax=4.
     elif WhichDS == "ElectronHad":
-        lmargin=0.69 ; labelsz=0.03
+        lmargin=0.69 ; labelsz=0.03; rmax=3.
     elif WhichDS == "MuHad":
-        lmargin=0.62 ; labelsz=0.03; hmin=0.05
+        lmargin=0.62 ; labelsz=0.03; hmin=0.05; rmax=3.
     elif WhichDS == "METParked":
         hmin=0.0005
     elif WhichDS == "MET":
-        hmin=0.0005; lmargin=0.76;
+        hmin=0.0005; lmargin=0.76; rmax=3.
     elif WhichDS == "HTMHT":
-        lmargin=0.4 ;rmax=19.
+        lmargin=0.4 ; rmax=1.5; hmin=0.8
         ## hmin=0.0005
     elif WhichDS == "MultiJet":
-        lmargin=0.37; labelsz=0.042; rmax=20.
+        lmargin=0.37; labelsz=0.042; rmax=2.
     elif WhichDS == "PhotonHad":
-        pass
+        rmax=2.
     elif WhichDS == "SingleElectron":
-        labelsz=0.03; lmargin=0.7
+        labelsz=0.03; lmargin=0.7; rmax=3.
     elif WhichDS == "SingleMu":
-        lmargin=0.5 ; labelsz=0.028;
+        lmargin=0.5 ; labelsz=0.028; rmax=6.
     elif WhichDS == "JetHT":
-        hmin=0.1; rmax=10.; lmargin=0.6
+        hmin=0.1; rmax=3.; lmargin=0.6
     elif WhichDS == "DoubleElectron":
-        lmargin=0.785; labelsz=0.03;
+        lmargin=0.785; labelsz=0.03; rmax=6.
     elif WhichDS == "SinglePhoton":
-        lmargin=0.55;
+        lmargin=0.55; rmax=4.
     elif WhichDS == "DoubleMu":
-        lmargin=0.48;
+        lmargin=0.48; rmax=3.
     elif WhichDS=="MuEGTauPlusXBJetPlusX":
         lmargin=0.6
+    elif WhichDS=="Tau":
+        lmargin=0.6; rmax = 2.
 
 
 
@@ -475,14 +485,17 @@ if __name__ == '__main__':
     la=ROOT.TLatex()
     la.SetNDC()
     la.SetTextAlign(11)
-    la.SetTextSize(0.026)
+    la.SetTextSize(0.03)
 
     header=WhichDS + " DS"    
-    xt=xl2+0.03; yt=yl2-0.03
-    la.DrawLatex(xt,yt, header);
-    la.DrawLatex(xt,yt-0.03, "L=1.1e34 Hz/cm^{2}");
+    xt=xl2+0.11; yt=yl2-0.03
+    la.SetTextColor(ROOT.kGreen+3)
+    la.DrawLatex(xt+.19,yt-.03, header);
+    la.SetTextSize(0.026)
+    la.SetTextColor(1)
+    la.DrawLatex(xt,yt-0.02, "L=1.1e34 Hz/cm^{2}");
     if not UseLowPTQCD:
-        la.DrawLatex(xt,yt-0.03-0.03, "no Low PT QCD");
+        la.DrawLatex(xt,yt-0.03-0.015, "no Low PT QCD");
 
     if not UseEnriched:
         la.DrawLatex(xt+0.2,yt-0.03-0.03, "no Enriched QCD");
@@ -491,8 +504,8 @@ if __name__ == '__main__':
     if WhichDS == "MuEGTauPlusXBJetPlusX":
         header= "BJetPlusX / TauPlusX / MuEG"
     ## leg.SetHeader(header)
-    leg.AddEntry(hist1,"13TeV New MC","f");
-    leg.AddEntry(hist2,"13TeV Old MC","f");
+    leg.AddEntry(hist1,"13TeV 62XMC-HLT700","f");
+    leg.AddEntry(hist2,"13TeV 53XMC-HLT53X","f");
     leg.SetTextSize(0.026);    
     leg.Draw();
 
@@ -505,16 +518,16 @@ if __name__ == '__main__':
 
 
     ### now Ratio
-    hRat=hist2.Clone();
+    hRat=hist1.Clone();
     ## hRat.SetName("8TeV/13TeV")
     ## hRat.Divide(h1,h2,1.,1.,"");
 
-    hRat.SetName("13TeVNew/13TeVOld")
-    hRat.Divide(hist2,h1,1.,1.,"");
+    hRat.SetName("700/53X")
+    hRat.Divide(hist1,hist2,1.,1.,"");
 
     ## hRat.GetYaxis().SetTitle("8TeV/13TeV");
-    hRat.GetYaxis().SetTitle("13TeVNew/13TeVOld");
-    hRat.GetYaxis().SetTitleOffset(.3);
+    hRat.GetYaxis().SetTitle("Ratio 700/53X");
+    hRat.GetYaxis().SetTitleOffset(.35);
     hRat.GetYaxis().SetLabelOffset(-.025);
 
     print labelsz*2.1
