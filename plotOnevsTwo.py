@@ -26,7 +26,7 @@ vsn = '700'
 if not UseLowPTQCD:
     #INPUTDIR1="resultsByDS_13TeV_20140623JustQCD_no15to30_" + vsn + "onlyQCD/1.1e+34"
     INPUTDIR1="resultsByDS_13TeV_20140609_no15to30_" + vsn + "NewXSec/1.1e+34"
-    INPUTDIR2="resultsByDS_no15to30_13TeV_20131029/1.1e+34"
+    INPUTDIR2="resultsByDS_no15to30_13TeV_20140129/1.1e+34"
     #INPUTDIR2="resultsByDS_13TeV_20140609_no15to30_" + vsn + "/1.1e+34"
     if not UseEnriched:
         INPUTDIR1='resultsByDS_13TeV_20140602_onlyQCD30_' + vsn
@@ -66,8 +66,8 @@ else:
 
 
     #WhichDS="TauPlusX"
-    #WhichDS="Tau"
-    WhichDS="BJetPlusX"
+    WhichDS="Tau"
+    #WhichDS="BJetPlusX"
     #WhichDS="MuEG"
     #WhichDS="noprescl"
 
@@ -311,7 +311,7 @@ if __name__ == '__main__':
             if tstTrig == trig:
                 cont=h1.GetBinContent(ibin)/ScaleMC;
                 err=h1.GetBinError(ibin)/ScaleMC;
-                outstring="13TeV New: " +  str(ibin) + " " + label + "  Rate: " + str(cont) + " +- " + str(err)
+                outstring="13TeV 700: " +  str(ibin) + " " + label + "  Rate: " + str(cont) + " +- " + str(err)
                 print outstring
                 tfile.write(outstring + "\n")
                 
@@ -336,7 +336,7 @@ if __name__ == '__main__':
                 cont=h2.GetBinContent(ibin)/ScaleMC;
                 err=h2.GetBinError(ibin)/ScaleMC;
 
-                outstring="13TeV Old: " +  str(ibin) + " " + label + "  Rate: " + str(cont) + " +- " + str(err)
+                outstring="13TeV 53X: " +  str(ibin) + " " + label + "  Rate: " + str(cont) + " +- " + str(err)
                 print outstring
                 tfile.write(outstring + "\n")
                 if err>=cont:
@@ -579,7 +579,7 @@ if __name__ == '__main__':
         twfile.write(twstring + "\n")
 
 
-    twfile.write("| Total Cumulative Dataset Rate | " + str('{0:.2f}'.format(cum1Tot)) + " +- " + str('{0:.2f}'.format(cum1Toterr)) + " | " + str('{0:.2f}'.format(cum2Tot)) + " +- " + str('{0:.2f}'.format(cum2Toterr)) + " | "+ "\n")
+    twfile.write("| Total Cumulative Dataset Rate | " + str('{0:.2f}'.format(cum2Tot)) + " +- " + str('{0:.2f}'.format(cum2Toterr)) + " | " + str('{0:.2f}'.format(cum1Tot)) + " +- " + str('{0:.2f}'.format(cum1Toterr)) + " | "+ "\n")
     #twfile.write("| Total Cumulative Dataset Rate | " + str('{0:.2f}'.format(cum13Tot)) + " | "+ "\n")
     twfile.write("| <center> <img height=\"220/\" alt=\"\" src=\"%ATTACHURL%" + outplot + ".gif\" /> </center> <br> <center> [[%ATTACHURL%" + outplot + ".gif][Click for full size Figure]] </center> |" + "\n")
 
