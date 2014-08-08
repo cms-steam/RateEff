@@ -6,7 +6,7 @@ import sys,string,math,os,ROOT
 
 from array import array
 
-sys.path.append('rootmacros'))
+sys.path.append('rootmacros')
 from myPyRootSettings import prepPlot
 from myPyRootMacros import GetHist, PrepLegend, drawErrorBarsUser, DrawText
 
