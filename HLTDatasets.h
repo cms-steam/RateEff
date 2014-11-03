@@ -47,14 +47,15 @@ public:
   //.. Data ...................................................................
   TString   name;     ///< Name of the trigger path.
   Int_t     index;    ///< Internal index for trigger bit access.
-
+  Int_t     number;  /// number of datasets the trigger is shared by
   //.. Functions ..............................................................
   /// Constructs a Trigger. setup() must be called to properly associate the index.
   Trigger ( const Char_t    triggerName[] = ""    ///< Name of the trigger path.
           , Int_t           triggerIndex  = -1    ///< Internal index for trigger bit access.
-          )
+	  , Int_t           numDataSets   = 1 )
     : name  (triggerName)
     , index (triggerIndex)
+    , number (numDataSets)
   { }
 };
 
@@ -72,8 +73,11 @@ public:
   TString               name;             ///< Name used to identify the dataset.
   Bool_t                isNewTrigger;     ///< True if this "dataset" is actually just a single new trigger to be considered, false otherwise.
   UInt_t                numEventsPassed;  ///< Cumulative number of events that has fired this dataset, so far.
+  Double_t              numWeightedEventsPassed;  ///< Cumulative number of events that has fired this dataset, so far, divided by number of Datasets it passed.
   Double_t              rate;             ///< Storage for the rate of firing this dataset, as computed by computeRate().
   Double_t              rateUncertainty2; ///< Storage for the rate uncertainty squared, as computed by computeRate().
+  Double_t              weightedRate;             ///< Storage for the weighted rate of firing this dataset, as computed by computeRate().
+  Double_t              weightedRateUncertainty2; ///< Storage for the weighted rate uncertainty squared, as computed by computeRate().
   std::vector<UInt_t>   numEventsAdded;   ///< Number of events that fired this dataset, but is @e not present in the other (indexed) dataset in this list.
   std::vector<Double_t> addedRate;        ///< Rate of events that fired this dataset, but is @e not present in the other (indexed) dataset in this list.
   std::vector<Double_t> addedUncertainty2;///< Squared uncertainty of rate of events that fired this dataset, but is @e not present in the other (indexed) dataset in this list.
