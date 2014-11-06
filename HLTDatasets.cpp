@@ -86,7 +86,7 @@ TString& strip(TString& string)
   return string;
 }
 
-/// Finds the index of an item in the given list. We allow for 2 occurances of a trigger, for Parking PD's
+/// Finds the first index of an item in the given list. We allow for several occurances of a trigger, for Parking PD's or DataSet weighted study
 template<typename Type1, typename Type2>
 Int_t indexOf(const std::vector<Type1>& whereToLook, const Type2& whatToFind, const Int_t firstOccurance = -1)
 {
@@ -101,6 +101,7 @@ Int_t indexOf(const std::vector<Type1>& whereToLook, const Type2& whatToFind, co
 
   return index;
 }
+
 
 /// Some escapes to convert to good latex. Mostly for trigger names.
 TString latexEscape(const Char_t string[])
@@ -196,6 +197,8 @@ void Dataset::computeRate(Double_t collisionRate, Double_t mu, UInt_t numProcess
 {
   rate                = toRate            (collisionRate, mu, numEventsPassed, numProcessedEvents);
   rateUncertainty2    = toRateUncertainty2(collisionRate, mu, numEventsPassed, numProcessedEvents);
+  weightedRate                = toRate            (collisionRate, mu, numWeightedEventsPassed, numProcessedEvents);
+  weightedRateUncertainty2    = toRateUncertainty2(collisionRate, mu, numWeightedEventsPassed, numProcessedEvents);
   const UInt_t        numDatasets  = datasetIndices.size();
   for (UInt_t iSet = 0; iSet < numDatasets; ++iSet) {
     addedRate         [iSet]       = toRate            (collisionRate, mu, numEventsAdded[iSet], numProcessedEvents);
@@ -209,11 +212,16 @@ void Dataset::computeRate(float scaleddenominator) //DATA ONLY
 {
   rate                =  (double)numEventsPassed/(double)scaleddenominator;
   rateUncertainty2    =  (double)numEventsPassed/(double)(scaleddenominator*scaleddenominator);
+  std::cout<<"Dataset= "<<name<<" evts passed "<< numEventsPassed <<" total weighted events="<<numWeightedEventsPassed<<std::endl;
+  weightedRate                =  numWeightedEventsPassed/(double)scaleddenominator;
+  weightedRateUncertainty2    =  numWeightedEventsPassed/(double)(scaleddenominator*scaleddenominator);
+  std::cout<<"Dataset= "<<name<<" weigthed Rate="<<weightedRate<<"+-"<<TMath::Sqrt(weightedRateUncertainty2)<<std::endl;
+  std::cout<<"Dataset= "<<name<<" Rate="<<rate<<"+-"<<TMath::Sqrt(rateUncertainty2)<<std::endl;
   const UInt_t        numDatasets  = datasetIndices.size();
   for (UInt_t iSet = 0; iSet < numDatasets; ++iSet) {
     addedRate         [iSet]       = (double)numEventsAdded[iSet]/(double)scaleddenominator;
     addedUncertainty2 [iSet]       = (double)numEventsAdded[iSet]/(double)(scaleddenominator*scaleddenominator);
-	}
+  }
 }
 
 void Dataset::report(std::ofstream& output, const std::vector<Dataset>& datasets, const Char_t* errata, 
@@ -346,7 +354,13 @@ void SampleDiagnostics::fill( const std::vector<Int_t>& triggerBit )
           ++numOthers;
       }
     } // end loop over other datasets
-    if (numOthers > 0)  ++commonEvents[iSet].back();
+    if (numOthers > 0) ++commonEvents[iSet].back();
+    if (!dataset.isNewTrigger) {
+      Double_t weight=1./(numOthers+1);
+      //      std::cout<<" Adding "<<weight<<" to "<<dataset.name;
+      dataset.numWeightedEventsPassed+=weight; //Compute a fractional rate per dataset
+      //std::cout<<" --->total: "<<dataset.numWeightedEventsPassed<<std::endl;
+    }
   } // end loop over datasets
 
   if (numPasses)        ++numPassedEvents;
@@ -362,7 +376,7 @@ void SampleDiagnostics::computeRate(Double_t collisionRate, Double_t mu)
 
   const UInt_t                numDatasets   = size();
   for (UInt_t iSet = 0; iSet < numDatasets; ++iSet) {
-		std::cout << "Dataset(" << at(iSet).name << ") : Size = " << at(iSet).numEventsPassed << " events " << std::endl;
+    std::cout << "Dataset(" << at(iSet).name << ") : Size = " << at(iSet).numEventsPassed << " events " << std::endl;
     at(iSet).computeRate(collisionRate, mu, numProcessedEvents);
     for (UInt_t jSet = 0; jSet <= numDatasets; ++jSet) {
       commonRates             [iSet][jSet]  = toRate            (collisionRate, mu, commonEvents[iSet][jSet], numProcessedEvents);
@@ -379,7 +393,7 @@ void SampleDiagnostics::computeRate(float scaleddenominator)
 
   const UInt_t                numDatasets   = size();
   for (UInt_t iSet = 0; iSet < numDatasets; ++iSet) {
-		std::cout << "Dataset(" << at(iSet).name << ") : Size = " << at(iSet).numEventsPassed << " events " << std::endl;
+    std::cout << "Dataset(" << at(iSet).name << ") : Size = " << at(iSet).numEventsPassed << " events " << std::endl;
     at(iSet).computeRate(scaleddenominator);
     for (UInt_t jSet = 0; jSet <= numDatasets; ++jSet) {
       commonRates             [iSet][jSet]  = (double)commonEvents[iSet][jSet]/(double)scaleddenominator;
@@ -400,6 +414,8 @@ void SampleDiagnostics::write() const
   const UInt_t      numBins       = numDatasets + 3;
   TH2*              hCorrelation  = new TH2F("h_correlation_" + name, name, numBins, 0, numBins, numBins, 0, numBins);
   TH2*              hSharedRate   = new TH2F("h_shared_rate_" + name, name, numBins, 0, numBins, numBins, 0, numBins);
+  TH1*              hDataSetPie   = new TH1F("h_pie_"         + name, name, numDatasets, 0, numDatasets);
+  TH1*              hDataSetPieNorm   = new TH1F("h_pie_norm_"         + name, name, firstNewTrigger+1, 0, firstNewTrigger+1);
   //...........................................................................
 
 
@@ -411,9 +427,9 @@ void SampleDiagnostics::write() const
       overhead     += dataset.rate;
       overheadErr  += dataset.rateUncertainty2;      // I think this is over-estimating it because the values are NOT uncorrelated, but oh well
     }
-
-    if (iSet == firstNewTrigger)    ++xBin;
+    if (iSet == firstNewTrigger)    ++xBin; 
     if (dataset.rate == 0)          continue;
+
     for (Int_t jSet = 0, yBin = 1; jSet <= numDatasets; ++jSet, ++yBin) {
       if (jSet == firstNewTrigger)  ++yBin;
       if (jSet == numDatasets)      ++yBin;
@@ -423,6 +439,14 @@ void SampleDiagnostics::write() const
       hSharedRate ->SetBinContent (xBin, yBin, commonRates[iSet][jSet]);
       hSharedRate ->SetBinError   (xBin, yBin, TMath::Sqrt(commonRateUncertainties2[iSet][jSet]));
     } // end loop over other datasets
+    std::cout<<"Fin Dataset ="<<dataset.name<<" weighted Rate="<<dataset.weightedRate<<"+-"<<TMath::Sqrt(dataset.weightedRateUncertainty2)<<std::endl;
+    std::cout<<"Fin Dataset ="<<dataset.name<<" Rate="<<dataset.rate<<"+-"<<TMath::Sqrt(dataset.rateUncertainty2)<<std::endl;
+
+    hDataSetPie->SetBinContent(xBin,dataset.weightedRate);
+    hDataSetPie->SetBinError(xBin,TMath::Sqrt(dataset.weightedRateUncertainty2));
+
+    hDataSetPieNorm->SetBinContent(xBin,dataset.weightedRate/passedRate);
+    hDataSetPieNorm->SetBinError(xBin,ratioError( dataset.weightedRate, dataset.weightedRateUncertainty2, passedRate, passedRateUncertainty2));
 
     // Rightmost column is the fraction of rate out of the total
     hCorrelation->SetBinContent   (numBins, xBin, dataset.rate / passedRate);
@@ -444,6 +468,8 @@ void SampleDiagnostics::write() const
 
   //...........................................................................
   // Histogram format
+  hDataSetPie->SetTitle  (TString::Format("%s : %s" , "Weighted Rate:", hDataSetPie->GetTitle() ));
+  hDataSetPieNorm->SetTitle  (TString::Format("%s : %s" , "Normalized Weighted Rate:", hDataSetPieNorm->GetTitle()) );
   hCorrelation->SetTitle  (TString::Format("%s (overhead = %.3g%% #pm %.3g%%)" , hCorrelation->GetTitle(), 100*overhead, 100*overheadErr));
   hSharedRate ->SetTitle  (TString::Format("%s (total rate = %.3g #pm %.3g Hz)", hSharedRate ->GetTitle(), passedRate, TMath::Sqrt(passedRateUncertainty2)));
   hCorrelation->SetZTitle ("(X #cap Y) / X");   hSharedRate->SetZTitle ("X #cap Y");
@@ -455,6 +481,7 @@ void SampleDiagnostics::write() const
   std::vector<TAxis*>     axes;
   axes.push_back(hCorrelation->GetXaxis());     axes.push_back(hCorrelation->GetYaxis());
   axes.push_back(hSharedRate ->GetXaxis());     axes.push_back(hSharedRate ->GetYaxis());
+  axes.push_back(hDataSetPie ->GetXaxis());    axes.push_back(hDataSetPieNorm ->GetXaxis());    
   const UInt_t            numAxes   = axes.size();
   for (UInt_t iAxis = 0; iAxis < numAxes; ++iAxis) {
     TAxis*                axis      = axes[iAxis];
@@ -474,7 +501,10 @@ void SampleDiagnostics::write() const
   if (gDirectory->GetDirectory("unnormalized") == 0)
     gDirectory->mkdir("unnormalized");
   gDirectory->cd("unnormalized");     hSharedRate ->Write();
+  hDataSetPie->Write();
   gDirectory->cd("/");                hCorrelation->Write();
+  hDataSetPieNorm->Write();
+
   //...........................................................................
 }
 
