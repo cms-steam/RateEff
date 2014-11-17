@@ -467,6 +467,9 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu, int Nevents)
    int nL1Trig = (int)menu->GetL1TriggerSize();
    TH1F *individual = new TH1F("individual","individual",nTrig,1,nTrig+1);
    TH1F *cumulative = new TH1F("cumulative","cumulative",nTrig,1,nTrig+1);
+   TH1F *L1Trignames = new TH1F("L1Trignames","L1Trignames",nTrig,1,nTrig+1);
+   TH1F *L1Prescale = new TH1F("L1Prescale","L1Prescale",nTrig,1,nTrig+1);
+   TH1F *HLTPrescale = new TH1F("HLTPrescale","HLTPrescale",nTrig,1,nTrig+1);
    TH1F *throughput = new TH1F("throughput","throughput",nTrig,1,nTrig+1);
    TH1F *eventsize = new TH1F("eventsize","eventsize",nTrig,1,nTrig+1);
    TH2F *overlap = new TH2F("overlap","overlap",nTrig,1,nTrig+1,nTrig,1,nTrig+1);
@@ -513,6 +516,64 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu, int Nevents)
    double cuThruErr = 0.;
    for (unsigned int i=0; i<menu->GetTriggerSize(); i++)
    {
+      TString tempTrigSeedPrescales;
+      double l1PrescaleCorrection = 1.;
+      std::map<TString, std::vector<TString> > mapL1seeds =
+            menu->GetL1SeedsOfHLTPathMap(); // mapping to all seeds 
+
+      vector<TString> vtmp;
+      vector<int> itmp;
+
+      typedef map< TString, vector<TString> > mymap;
+      for (mymap::const_iterator it = mapL1seeds.begin(); it
+            != mapL1seeds.end(); ++it)
+      {
+         if (it->first.CompareTo(menu->GetTriggerName(i)) == 0)
+         {
+            vtmp = it->second;
+            //cout<<it->first<<endl; 
+            for (unsigned int j=0; j<it->second.size(); j++)
+            {
+	      itmp.push_back(menu->GetL1Prescale((it->second)[j]));
+               //cout<<"\t"<<(it->second)[j]<<endl; 
+            }
+         }
+      }
+
+      for (unsigned int j=0; j<vtmp.size(); j++)
+      {
+
+         if (cfg->readRefPrescalesFromNtuple)
+         {
+            for (unsigned int k=0; k<menu->GetL1TriggerSize(); k++)
+            {
+               if ((menu->GetL1TriggerName(k)) == (vtmp[j]))
+               {
+                  if ((menu->GetL1TriggerName(k)).Contains("OpenL1_"))
+                  {
+                     l1PrescaleCorrection = 1.0;
+                     tempTrigSeedPrescales += (itmp[j]*l1PrescaleCorrection);
+                  }
+                  else
+                  {
+		    // JH
+		    l1PrescaleCorrection = 1.0;
+                    // l1PrescaleCorrection = averageRefPrescaleL1[k];
+		    // end JH
+                     tempTrigSeedPrescales += (itmp[j]*l1PrescaleCorrection);
+                  }
+               }
+            }
+         }
+         else
+            tempTrigSeedPrescales += itmp[j];
+
+         if (j<(vtmp.size()-1))
+         {
+            tempTrigSeedPrescales = tempTrigSeedPrescales + ", ";
+         }
+      }
+
       cumulRate += spureRate[i];
       cumulRateErr += pow(spureRateErr[i], fTwo);
       cuThru += spureRate[i] * menu->GetEventsize(i);
@@ -525,6 +586,14 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu, int Nevents)
       cumulative->SetBinContent(i+1, cumulRate);
       cumulative->SetBinError(i+1, cumulRErr);
       cumulative->GetXaxis()->SetBinLabel(i+1, menu->GetTriggerName(i));
+      L1Trignames->SetBinContent(i+1, 1.);
+      L1Trignames->GetXaxis()->SetBinLabel(i+1, menu->GetSeedCondition(menu->GetTriggerName(i)));
+      L1Prescale->SetBinContent(i+1, 1.);
+      L1Prescale->GetXaxis()->SetBinLabel(i+1, tempTrigSeedPrescales);
+      char hpresc[10];
+      sprintf(hpresc, "%f", menu->GetPrescale(i) * menu->GetReferenceRunPrescale(i));
+      HLTPrescale->SetBinContent(i+1, 1.);
+      HLTPrescale->GetXaxis()->SetBinLabel(i+1, hpresc);
       unique->SetBinContent(i+1, pureRate[i]); 
       unique->GetXaxis()->SetBinLabel(i+1, menu->GetTriggerName(i));
 
@@ -639,6 +708,12 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu, int Nevents)
    else cumulative->SetYTitle("Rate (Hz)");
    if (cfg->isCounts) cumulative->SetTitle("Cumulative trigger count");
    else cumulative->SetTitle("Cumulative trigger rate");
+   L1Trignames->SetStats(0);
+   L1Trignames->SetTitle("L1 Trigger Seeds");
+   L1Prescale->SetStats(0);
+   L1Prescale->SetTitle("L1 Trigger Prescales");
+   HLTPrescale->SetStats(0);
+   HLTPrescale->SetTitle("HLT Trigger Prescales");
    overlap->SetStats(0);
    overlap->SetTitle("Overlap");
    unique->SetStats(0); 
@@ -650,6 +725,9 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu, int Nevents)
    cumulative->Write();
    eventsize->Write();
    throughput->Write();
+   L1Trignames->Write();
+   L1Prescale->Write();
+   HLTPrescale->Write();
    overlap->Write();
    unique->Write();
    NEVTS->Write();
@@ -1292,7 +1370,7 @@ void OHltRatePrinter::printHLTDatasets(
             for (unsigned int i=0; i<menu->GetTriggerSize(); i++)
             {
 
-               TString tempTrigSeedPrescales;
+	       TString tempTrigSeedPrescales;
                TString tempTrigSeeds;
                std::map<TString, std::vector<TString> > mapL1seeds =
                      menu->GetL1SeedsOfHLTPathMap(); // mapping to all seeds 
