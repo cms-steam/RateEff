@@ -590,7 +590,7 @@ void OHltRatePrinter::writeHistos(OHltConfig *cfg, OHltMenu *menu, int Nevents)
       L1Trignames->GetXaxis()->SetBinLabel(i+1, menu->GetSeedCondition(menu->GetTriggerName(i)));
       L1Prescale->SetBinContent(i+1, 1.);
       L1Prescale->GetXaxis()->SetBinLabel(i+1, tempTrigSeedPrescales);
-      char hpresc[10];
+      char hpresc[6];
       sprintf(hpresc, "%f", menu->GetPrescale(i) * menu->GetReferenceRunPrescale(i));
       HLTPrescale->SetBinContent(i+1, 1.);
       HLTPrescale->GetXaxis()->SetBinLabel(i+1, hpresc);
