@@ -314,7 +314,7 @@ void calcRates(
             /(double)cfg->maxFilledBunches)/cfg->bunchCrossingTime; // Hz
 
       if (!(cfg->isRealData == 1 && cfg->lumiSectionLength > 0))
-         hltDatasets[i].computeRate(collisionRate, mu); //SAK -- convert event counts into rates
+	hltDatasets[i].computeRate(cfg->isCounts,collisionRate, mu); //SAK -- convert event counts into rates
 
 
       for (unsigned int iLS=0; iLS<rcs[i]->perLumiSectionCount.size(); iLS++)
