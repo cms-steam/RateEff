@@ -22,7 +22,8 @@
 //=============================================================================
 
 /// Computes the trigger rate, given the per-event trigger efficiency.
-Double_t toRate ( Double_t    collisionRate       ///< Rate of bunch crossings, for onverting numbers of events into rates.
+Double_t toRate (Bool_t bycount // if true by count or if false rates 
+		 , Double_t    collisionRate       ///< Rate of bunch crossings, for onverting numbers of events into rates.
                 , Double_t    mu                  ///< bunchCrossingTime * crossSection * instantaneousLuminosity * maxFilledBunches / nFilledBunches
                 , UInt_t      numPassedEvents     ///< Number of events that passed, to be used as the numerator in the efficiency calculation.
                 , UInt_t      numProcessedEvents  ///< Total number of events processed, to be used as the denominator in the efficiency calculation.
@@ -34,7 +35,8 @@ Double_t toRate ( Double_t    collisionRate       ///< Rate of bunch crossings, 
   ////std::cout << "  ---  numProcessedEvents = " << numProcessedEvents                << std::endl;
   ////std::cout << "  ---  exp(-mu eff)       = " << TMath::Exp(-mu * numPassedEvents / numProcessedEvents)      << std::endl;
   ////std::cout << "  ---  rate               = " << collisionRate * (1 - TMath::Exp(- mu * numPassedEvents / numProcessedEvents)) << std::endl;
-  return collisionRate * (1 - TMath::Exp(- mu * numPassedEvents / numProcessedEvents));
+  if (bycount) return numPassedEvents;
+  else return collisionRate * (1 - TMath::Exp(- mu * numPassedEvents / numProcessedEvents));
 }
 
 
@@ -43,7 +45,8 @@ Double_t toRate ( Double_t    collisionRate       ///< Rate of bunch crossings, 
   trigger efficiency. The rate uncertainty is assumed to be purely due to the binomial 
   uncertainty on the evaluation of the trigger efficiency.
 */
-Double_t toRateUncertainty2 ( Double_t    collisionRate       ///< Rate of bunch crossings, for onverting numbers of events into rates.
+Double_t toRateUncertainty2 (Bool_t bycount // if true by count or if false rates 
+			    , Double_t    collisionRate       ///< Rate of bunch crossings, for onverting numbers of events into rates.
                             , Double_t    mu                  ///< bunchCrossingTime * crossSection * instantaneousLuminosity * maxFilledBunches / nFilledBunches
                             , UInt_t      numPassedEvents     ///< Number of events that passed, to be used as the numerator in the efficiency calculation.
                             , UInt_t      numProcessedEvents  ///< Total number of events processed, to be used as the denominator in the efficiency calculation.
@@ -60,7 +63,8 @@ Double_t toRateUncertainty2 ( Double_t    collisionRate       ///< Rate of bunch
   ////std::cout << "  ---  binomialError2     = " << binomialError2                    << std::endl;
   ////std::cout << "  ---  factor             = " << factor                            << std::endl;
   ////std::cout << "  ---  exp(-2 mu eff)     = " << TMath::Exp(- 2 * mu * efficiency) << std::endl;
-  return factor * factor * binomialError2 * TMath::Exp(- 2 * mu * efficiency);
+  if (bycount) return numPassedEvents;
+  else return factor * factor * binomialError2 * TMath::Exp(- 2 * mu * efficiency);
 }
 
 /**
@@ -193,18 +197,19 @@ void Dataset::setup(const std::vector<Dataset>& datasets)
 }
 
 
-void Dataset::computeRate(Double_t collisionRate, Double_t mu, UInt_t numProcessedEvents) //MC ONLY
+void Dataset::computeRate(Bool_t bycount, Double_t collisionRate, Double_t mu, UInt_t numProcessedEvents) //MC ONLY
 {
-  rate                = toRate            (collisionRate, mu, numEventsPassed, numProcessedEvents);
-  rateUncertainty2    = toRateUncertainty2(collisionRate, mu, numEventsPassed, numProcessedEvents);
-  weightedRate                = toRate            (collisionRate, mu, numWeightedEventsPassed, numProcessedEvents);
-  weightedRateUncertainty2    = toRateUncertainty2(collisionRate, mu, numWeightedEventsPassed, numProcessedEvents);
-  const UInt_t        numDatasets  = datasetIndices.size();
-  for (UInt_t iSet = 0; iSet < numDatasets; ++iSet) {
-    addedRate         [iSet]       = toRate            (collisionRate, mu, numEventsAdded[iSet], numProcessedEvents);
-    addedUncertainty2 [iSet]       = toRateUncertainty2(collisionRate, mu, numEventsAdded[iSet], numProcessedEvents);
-    ////std::cout << "  +   " << numEventsAdded[iSet] << " -> " << addedRate[iSet] << " +/- " << TMath::Sqrt(addedUncertainty2[iSet]) << std::endl;
-  } // end loop over compared datasets
+  
+    rate                = toRate            (bycount,collisionRate, mu, numEventsPassed, numProcessedEvents);
+    rateUncertainty2    = toRateUncertainty2(bycount,collisionRate, mu, numEventsPassed, numProcessedEvents);
+    weightedRate                = toRate            (bycount,collisionRate, mu, numWeightedEventsPassed, numProcessedEvents);
+    weightedRateUncertainty2    = toRateUncertainty2(bycount,collisionRate, mu, numWeightedEventsPassed, numProcessedEvents);
+    const UInt_t        numDatasets  = datasetIndices.size();
+    for (UInt_t iSet = 0; iSet < numDatasets; ++iSet) {
+      addedRate         [iSet]       = toRate            (bycount,collisionRate, mu, numEventsAdded[iSet], numProcessedEvents);
+      addedUncertainty2 [iSet]       = toRateUncertainty2(bycount,collisionRate, mu, numEventsAdded[iSet], numProcessedEvents);
+      ////std::cout << "  +   " << numEventsAdded[iSet] << " -> " << addedRate[iSet] << " +/- " << TMath::Sqrt(addedUncertainty2[iSet]) << std::endl;
+    } // end loop over compared datasets
   ////std::cout << "  +   " << name << " : " << numEventsPassed << " -> " << rate << std::endl;
 }
 
@@ -368,19 +373,19 @@ void SampleDiagnostics::fill( const std::vector<Int_t>& triggerBit )
   if (timer)            timer->Stop();
 }
 
-void SampleDiagnostics::computeRate(Double_t collisionRate, Double_t mu)
+void SampleDiagnostics::computeRate(Bool_t bycount, Double_t collisionRate, Double_t mu)
 {
-  passedRate                  = toRate            (collisionRate, mu, numPassedEvents, numProcessedEvents);
-  passedRateUncertainty2      = toRateUncertainty2(collisionRate, mu, numPassedEvents, numProcessedEvents);
+  passedRate                  = toRate            (bycount,collisionRate, mu, numPassedEvents, numProcessedEvents);
+  passedRateUncertainty2      = toRateUncertainty2(bycount,collisionRate, mu, numPassedEvents, numProcessedEvents);
   std::cout << "computeRate(" << name << ") : collisionRate = " << collisionRate << " ; mu = " << mu << std::endl;
 
   const UInt_t                numDatasets   = size();
   for (UInt_t iSet = 0; iSet < numDatasets; ++iSet) {
     std::cout << "Dataset(" << at(iSet).name << ") : Size = " << at(iSet).numEventsPassed << " events " << std::endl;
-    at(iSet).computeRate(collisionRate, mu, numProcessedEvents);
+    at(iSet).computeRate(bycount,collisionRate, mu, numProcessedEvents);
     for (UInt_t jSet = 0; jSet <= numDatasets; ++jSet) {
-      commonRates             [iSet][jSet]  = toRate            (collisionRate, mu, commonEvents[iSet][jSet], numProcessedEvents);
-      commonRateUncertainties2[iSet][jSet]  = toRateUncertainty2(collisionRate, mu, commonEvents[iSet][jSet], numProcessedEvents);
+      commonRates             [iSet][jSet]  = toRate            (bycount,collisionRate, mu, commonEvents[iSet][jSet], numProcessedEvents);
+      commonRateUncertainties2[iSet][jSet]  = toRateUncertainty2(bycount,collisionRate, mu, commonEvents[iSet][jSet], numProcessedEvents);
     } // end loop over other datasets
   } // end loop over datasets
 }

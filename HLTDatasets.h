@@ -128,7 +128,8 @@ public:
                     );
 
   /// Computes and stores the rate, using the stored number of events. 
-  void computeRate( Double_t  collisionRate       ///< Rate of bunch crossings, for onverting numbers of events into rates.
+  void computeRate( Bool_t bycount // needed for by count
+		  ,  Double_t  collisionRate       ///< Rate of bunch crossings, for onverting numbers of events into rates.
                   , Double_t  mu                  ///< bunchCrossingTime * crossSection * instantaneousLuminosity * maxFilledBunches / nFilledBunches
                   , UInt_t    numProcessedEvents  ///< Number of events processed for this sample, to be used for the trigger efficiency calculations.
                   );
@@ -222,7 +223,7 @@ public:
     Computes and stores rates, using the stored number of events. Important to call at the end
     of the event loop, before the diagnostic output functions.
   */
-  void computeRate( Double_t  collisionRate       ///< Rate of bunch crossings, for onverting numbers of events into rates.
+  void computeRate( Bool_t bycount, Double_t  collisionRate       ///< Rate of bunch crossings, for onverting numbers of events into rates.
                   , Double_t  mu                  ///< bunchCrossingTime * crossSection * instantaneousLuminosity * maxFilledBunches / nFilledBunches
                   );
 
