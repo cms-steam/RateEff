@@ -1,6 +1,5 @@
 import sys, os, glob, subprocess
 
-
 condorFile = 'condor_rates.csh'
 submitFile = 'CondorJob.cfg'
  
@@ -8,21 +7,22 @@ DOMUCUTS = 'false'   ## set to true in "if statement below" for bins 80-120 and 
 DOELECUTS = 'false'
 
 bs = '25ns'
-#bs = '50ns'
-vsn = '62X'
-#vsn = '700'
+#vsn = '721'
+vsn = '721'
 rs = '13TeV'
-theDate = '20140606'
+theDate = '20141205'
+#theDate = '20141028'
 
-#Bins = ['QCD_Pt-20to30_MuEnrichedPt5_antiEM']
-#Bins = ['QCD_Pt-5to10_antiEM', 'QCD_Pt-10to15_antiEM', 'QCD_Pt-15to30_antiEM', 'QCD_Pt-30to50_antiEM', 'QCD_Pt-50to80_antiEM', 'QCD_Pt-80to120_antiEM', 'QCD_Pt-120to170_antiEM', 'QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt', 'QCD_Pt-1000to1400_nofilt', 'QCD_Pt-1400to1800_nofilt', 'QCD_Pt-1800_nofilt']
-#Bins = ['QCD_Pt-5to10_EMEnriched', 'QCD_Pt-10to20_EMEnriched', 'QCD_Pt-20to30_EMEnriched', 'QCD_Pt-30to80_EMEnriched', 'QCD_Pt-80to170_EMEnriched']
+#Bins = ['QCD_Pt-50to80_MuEnrichedPt5_antiEM']
+#'QCD_Pt-30to50_nofilt', 'QCD_Pt-50to80_nofilt', 'QCD_Pt-80to120_nofilt', 'QCD_Pt-120to170_nofilt',
+#Bins = ['QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt']
+#Bins = ['QCD_Pt-30to80_EMEnriched', 'QCD_Pt-80to170_EMEnriched']
 #Bins = ['QCD_Pt-15to20_MuEnrichedPt5_antiEM', 'QCD_Pt-20to30_MuEnrichedPt5_antiEM', 'QCD_Pt-30to50_MuEnrichedPt5_antiEM', 'QCD_Pt-50to80_MuEnrichedPt5_antiEM', 'QCD_Pt-80to120_MuEnrichedPt5_antiEM', 'QCD_Pt-120to170_MuEnrichedPt5_antiEM', 'QCD_Pt-170to300_MuEnrichedPt5_nofilt', 'QCD_Pt-300to470_MuEnrichedPt5_nofilt', 'QCD_Pt-470to600_MuEnrichedPt5_nofilt', 'QCD_Pt-600to800_MuEnrichedPt5_nofilt', 'QCD_Pt-800to1000_MuEnrichedPt5_nofilt', 'QCD_Pt-1000_MuEnrichedPt5_nofilt']
 #Bins = ['WToMuNu', 'WToENu', 'DYToEE', 'DYToMuMu']
-Bins = ['QCD_Pt-15to30_antiEM', 'QCD_Pt-30to50_antiEM', 'QCD_Pt-50to80_antiEM', 'QCD_Pt-80to120_antiEM', 'QCD_Pt-120to170_antiEM', 'QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt', 'QCD_Pt-1000to1400_nofilt', 'QCD_Pt-1400to1800_nofilt', 'QCD_Pt-1800_nofilt', 'QCD_Pt-10to20_EMEnriched', 'QCD_Pt-20to30_EMEnriched', 'QCD_Pt-30to80_EMEnriched', 'QCD_Pt-80to170_EMEnriched', 'QCD_Pt-15to20_MuEnrichedPt5_antiEM', 'QCD_Pt-20to30_MuEnrichedPt5_antiEM', 'QCD_Pt-30to50_MuEnrichedPt5_antiEM', 'QCD_Pt-50to80_MuEnrichedPt5_antiEM', 'QCD_Pt-80to120_MuEnrichedPt5_antiEM', 'QCD_Pt-120to170_MuEnrichedPt5_antiEM', 'QCD_Pt-170to300_MuEnrichedPt5_nofilt', 'QCD_Pt-300to470_MuEnrichedPt5_nofilt', 'QCD_Pt-470to600_MuEnrichedPt5_nofilt', 'QCD_Pt-600to800_MuEnrichedPt5_nofilt', 'WToMuNu', 'WToENu', 'DYToEE', 'DYToMuMu']
+Bins = [ 'QCD_Pt-30to50_antiEM', 'QCD_Pt-50to80_antiEM', 'QCD_Pt-80to120_antiEM', 'QCD_Pt-120to170_antiEM', 'QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt', 'QCD_Pt-1000to1400_nofilt', 'QCD_Pt-1400to1800_nofilt', 'QCD_Pt-1800_nofilt',  'QCD_Pt-30to80_EMEnriched', 'QCD_Pt-80to170_EMEnriched', 'QCD_Pt-30to50_MuEnrichedPt5_antiEM', 'QCD_Pt-50to80_MuEnrichedPt5_antiEM', 'QCD_Pt-80to120_MuEnrichedPt5_antiEM','WToMuNu', 'WToENu', 'DYToEE', 'DYToMuMu']
 
-DS = ['noprescl', 'BJetPlusX', 'BTag', 'DoubleElectron', 'DoubleMu', 'DoublePhoton', 'DoublePhotonHighPt', 'ElectronHad', 'HTMHT', 'JetHT', 'MET', 'MuEG', 'MuHad', 'MuOnia', 'MultiJet', 'PhotonHad', 'SingleElectron', 'SingleMu', 'SinglePhoton', 'Tau', 'TauPlusX']
-#DS = ['SingleMu']
+DS = ['All']
+
 
 for b in range(len(Bins)):
 
@@ -37,15 +37,16 @@ for b in range(len(Bins)):
         if not os.path.exists(newDir2):
             os.makedirs(newDir2)
 
-        if (Bins[b] == 'QCD_Pt-15to30_antiEM' or Bins[b] == 'QCD_Pt-30to50_antiEM' or Bins[b] == 'QCD_Pt-50to80_antiEM' or Bins[b] == 'QCD_Pt-80to120_antiEM' or Bins[b] == 'QCD_Pt-120to170_antiEM' or Bins[b] == 'QCD_Pt-170to300_nofilt' or Bins[b] == 'QCD_Pt-300to470_nofilt' or Bins[b] == 'QCD_Pt-470to600_nofilt' or Bins[b] == 'QCD_Pt-600to800_nofilt' or Bins[b] == 'QCD_Pt-20to30_EMEnriched' or Bins[b] == 'QCD_Pt-30to80_EMEnriched' or Bins[b] == 'QCD_Pt-80to170_EMEnriched'):
-            DOMUCUTS = 'true'
-            BASENAME1 = '/eos/uscms/store/user/lpctrig/ingabu/TMD/PU20bx25/' + Bins[b] + '_TuneZ2star_' + rs + '_pythia8/'
+        #if(Bins[b]=='QCD_Pt-120to170_antiEM'):
+        if(Bins[b]=='QCD_Pt-30to50_MuEnrichedPt5_antiEM' or Bins[b] == 'QCD_Pt-50to80_MuEnrichedPt5_antiEM' or Bins[b] == 'QCD_Pt-80to120_MuEnrichedPt5_antiEM' or Bins[b] == 'QCD_Pt-120to170_antiEM' or Bins[b] == 'QCD_Pt-170to300_nofilt' or Bins[b] == 'QCD_Pt-300to470_nofilt' or Bins[b] == 'QCD_Pt-470to600_nofilt' or Bins[b] == 'QCD_Pt-600to800_nofilt' or Bins[b] == 'QCD_Pt-800to1000_nofilt' or Bins[b] =='QCD_Pt-1000to1400_nofilt' or Bins[b] =='QCD_Pt-1400to1800_nofilt' or Bins[b] =='QCD_Pt-1800_nofilt'):
+            DOMUCUTS = 'false'
+            BASENAME1 = '/eos/uscms/store/user/lpctrig/dansand/STEAM/NTuples_721_PU40bx25_HCAL/' + Bins[b] + '_Tune4C_' + rs + '_pythia8/'
         elif (Bins[b] == 'WToMuNu' or Bins[b] == 'WToENu' or Bins[b] == 'DYToEE' or Bins[b] == 'DYToMuMu'):
             DOMUCUTS = 'false'
-            BASENAME1 = '/eos/uscms/store/user/lpctrig/ingabu/TMD/PU20bx25/' + Bins[b]+ '_Tune4C_' + rs + '-pythia8/'
-        else:
-            DOMUCUTS = 'false'
-            BASENAME1 = '/eos/uscms/store/user/lpctrig/ingabu/TMD/PU20bx25/' + Bins[b] + '_TuneZ2star_' + rs + '_pythia8/'
+            BASENAME1 = '/eos/uscms/store/user/lpctrig/dansand/STEAM/NTuples_721_PU40bx25_HCAL/' + Bins[b]+ '_Tune4C_' + rs + '-pythia8/'
+        elif (Bins[b] == 'QCD_Pt-30to50_antiEM' or Bins[b] =='QCD_Pt-50to80_antiEM' or Bins[b]== 'QCD_Pt-80to120_antiEM' or Bins[b]=='QCD_Pt-30to80_EMEnriched' or Bins[b]=='QCD_Pt-80to170_EMEnriched'):
+            DOMUCUTS = 'true'
+            BASENAME1 = '/eos/uscms/store/user/lpctrig/dansand/STEAM/NTuples_721_PU40bx25_HCAL/' + Bins[b] + '_Tune4C_' + rs + '_pythia8/'
 
 
         print "InDir: ", BASENAME1

@@ -10,7 +10,7 @@ RootS="13TeV"
 ## BS="50ns"
 BS="25ns"
 
-vsn = '700'
+vsn = '721'
 #vsn = '62X'
 
 # ilumi = 1.7e34 # projected lumi for 13 TeV
@@ -18,11 +18,11 @@ vsn = '700'
 ilumi = 1.4e34
 
 ## DataSets=["BJetPlusX", "BTag", "DoubleElectron", "DoubleMu", "DoublePhoton", "DoublePhotonHighPt", "ElectronHad", "HTMHT", "JetHT", "MET", "MuEG", "MuHad", "MuOnia", "MultiJet", "PhotonHad", "SingleElectron", "SingleMu", "SinglePhoton", "Tau", "TauPlusX"]
-DataSets=['JetHT']
+DataSets=['All']
 
 #theDate="20140803"
 #theDate="20140623JustQCD"
-theDate="20141114"
+theDate="20141205"
 
 mfillb = 3564.
 if BS == "50ns":
@@ -38,7 +38,7 @@ else:
 collrate = (nfillb/mfillb)/xtime
 
 #OutDir=os.path.join("resultsByDS" + "_" + RootS +"_"+ theDate + '_no15to30_' + vsn + 'CorrMuCuts',str(ilumi))
-OutDir=os.path.join("resultsByDS" + "_" + RootS + '_20141114_' + vsn + 'wPresc',str(ilumi))
+OutDir=os.path.join("resultsByDS" + "_" + RootS + '_20141205_' + vsn + 'wPresc_Pie',str(ilumi))
 
 from CrossSections import crossSections13TeV
 
@@ -79,6 +79,30 @@ def GetHistsAndAddCounts(indir,outdir):
     f0=os.path.basename(rootFiles[0])
     outfile=os.path.join(outdir,f0[:f0.rfind("_")] + "_combined.root")
     AddCounts(rootFiles,outfile)
+   
+    return outfile
+
+def GetCorrelHistsAndAddCounts(indir,outdir):
+
+    outHist="XXX"
+    filelist=os.listdir(indir)
+    nfound=0
+    rootFiles=[]
+    for f in filelist:
+        if f.find("PU.root")>-1:
+            print "Skipping: ", f
+            continue
+        if f.find(".root")>-1 and f.find("correlations")>-1:
+            rootFiles.append(os.path.join(indir,f))
+
+    if len(rootFiles) == 0:
+        print "Could not find any root file in directory: ",indir, "  -- Exiting"
+        sys.exit(1)
+
+
+    f0=os.path.basename(rootFiles[0])
+    outfile=os.path.join(outdir,f0[:f0.rfind("_")] + "_combined.root")
+    AddCorrelCounts(rootFiles,outfile,False)
    
     return outfile
 
@@ -125,6 +149,43 @@ def AddCounts(rootFiles,outfile,sumEvents=True):
 
     for inf in handles:
         inf.Close()
+
+def AddCorrelCounts(rootFiles,outfile,LastStep=False):
+
+    outf = TFile(outfile,"RECREATE");
+    SetOwnership( outf, False )   # tell python not to take ownership
+    print "Output written to: ", outfile
+
+    
+    i=-1
+    handles=[]
+    for f in rootFiles:
+        i+=1
+        ## print i,f
+
+        infile = TFile.Open(f)
+        handles.append(infile)
+        if LastStep: 
+            histPie = infile.Get("h_pie_QCD")
+            histSharedRate = infile.Get("h_shared_rate_QCD")
+        else:
+            histPie = infile.Get("unnormalized/h_pie_QCD")
+            histSharedRate = infile.Get("unnormalized/h_shared_rate_QCD")
+        
+        if i==0:
+            histPie_all = histPie.Clone()
+            histSharedRate_all = histSharedRate.Clone()
+        else:
+            histPie_all.Add(histPie)
+            histSharedRate_all.Add(histSharedRate)
+
+    outf.cd()
+    histPie_all.Write()
+    histSharedRate_all.Write()
+    outf.Close()
+
+    for inf in handles:
+        inf.Close()
     
 def ConvertToRate(xs,histfile):
 
@@ -153,46 +214,11 @@ def ConvertToRate(xs,histfile):
     
     print "Sample: ",Sample, " Cross section: ",xs/1.e-36, "N: ",nevt
     
-    offset=0.
-    for b in xrange(1,nbins+1):
-        Label = histInd.GetXaxis().GetBinLabel(b)
-        CountInd = histInd.GetBinContent(b)
-        CountCum = histCum.GetBinContent(b)
-    
-        # if Label == "HLT_HcalPhiSym_v10" or Label == "HLT_HcalNZS_v9" or \
-        #         Label == "HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v1" or \
-        #         Label == "HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v1" or \
-        #         Label == "HLT_QuadJet50_v2" or Label == "HLT_QuadJet50_Jet20_v1":
-        # Label == "HLT_HcalPhiSym_v10" or Label == "HLT_HcalNZS_v9":
-        ## if Label == "HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v1" or \
-        ##         Label == "HLT_HcalPhiSym_v10" or Label == "HLT_HcalNZS_v9" or \
-        ##         Label == "HLT_QuadJet50_v2":
-        ##         
-        ##     # print Label," ",Rate(CountInd),Rate(CountCum)
-        ##     offset=histCum.GetBinContent(b)-histCum.GetBinContent(b-1)
-        ##     print "A: ",b,Label,histCum.GetBinContent(b),histCum.GetBinContent(b-1),offset
-        ## 
-        ##     histInd.SetBinContent(b,0.)
-        ##     histInd.SetBinError(b,0.)
-        ## elif  Label == "HLT_DiJet35_MJJ750_AllJets_DEta3p5_VBF_v1" or\
-        ##         Label == "HLT_QuadJet50_Jet20_v1":
-        ##     histInd.SetBinContent(b,0.)
-        ##     histInd.SetBinError(b,0.)
-    
-        CountCum=CountCum-offset
-        histCum.SetBinContent(b,CountCum)
-        histCum.SetBinError(b,math.sqrt(CountCum))
-    
-    
     
     for b in xrange(1,nbins+1):
         Label = histInd.GetXaxis().GetBinLabel(b)
         CountInd = histInd.GetBinContent(b)
         CountCum = histCum.GetBinContent(b)
-    
-    
-        if Label == "HLT_DiJet35_MJJ700_AllJets_DEta3p5_VBF_v1":
-            print "B: ",b,Label,histCum.GetBinContent(b),histCum.GetBinContent(b-1)
     
         RateInd = Rate(CountInd,nevt,xs)
         RateIndErr = RateErr(CountInd,nevt,xs)
@@ -219,6 +245,65 @@ def ConvertToRate(xs,histfile):
 
     return outfile
 
+def ConvertCorrelToRate(xs,histfile,histfileMain):
+
+    outfile=histfile.replace("combined","rates")
+
+    outf = TFile(outfile,"RECREATE");
+    SetOwnership( outf, False )   # tell python not to take ownership
+    print "Rate Histogram written to: ", outfile
+    
+    infileNEVTS = TFile.Open(histfileMain)
+
+    histNevt = infileNEVTS.Get("NEVTS")
+    nevt = histNevt.GetBinContent(1)
+
+    infileNEVTS.Close()
+
+    infile = TFile.Open(histfile)
+
+    histPie = infile.Get("h_pie_QCD")
+    histSharedRate = infile.Get("h_shared_rate_QCD")
+    
+    histPie_cl = histPie.Clone()
+    histSharedRate_cl = histSharedRate.Clone()
+    
+    
+    nbins = histPie.GetNbinsX()
+    binx = histSharedRate.GetNbinsX()
+    biny = histSharedRate.GetNbinsY()
+    nbinsSh = histSharedRate.GetBin(binx,biny)
+    
+    print "Sample: ",Sample, " Cross section: ",xs/1.e-36, "N: ",nevt
+    
+    for b in xrange(1,nbins+1):
+        #Label = histPie.GetXaxis().GetBinLabel(b)
+        CountPie = histPie.GetBinContent(b)
+    
+        RatePie = Rate(CountPie,nevt,xs)
+        RatePieErr = RateErr(CountPie,nevt,xs)
+    
+        histPie_cl.SetBinContent(b,RatePie)
+        histPie_cl.SetBinError(b,RatePieErr)
+    
+    for b in range(1,nbinsSh+1):
+        CountShared = histSharedRate.GetBinContent(b)
+
+        RateSharedRate = Rate(CountShared,nevt,xs)
+        RateSharedRateErr = RateErr(CountShared,nevt,xs)
+
+        histSharedRate_cl.SetBinContent(b,RateSharedRate)
+        histSharedRate_cl.SetBinError(b,RateSharedRateErr)
+        histSharedRate_cl.SetTitle("QCD")
+    
+    outf.cd()
+    histPie_cl.Write()
+    histSharedRate_cl.Write()
+    outf.Close()
+    infile.Close()
+
+    return outfile
+
 
 if __name__ == '__main__':
 
@@ -236,15 +321,13 @@ if __name__ == '__main__':
         print "Running DS:", DS
 
         OutFile="hltmenu_"+RootS+"_"+BS+"_combinedRate_"+str(ilumi)+"_"+DS+ '_' + vsn + ".root"
+        OutFileCorrel="hltmenu_"+RootS+"_"+BS+"_combinedRate_correlations_"+str(ilumi)+"_"+DS+ '_' + vsn + ".root"
 
         theRateHists=[]
+        theRateHistsCorrel=[]
         theSamples=crossSections.keys()
         for Sample in theSamples:
 
-            ## print crossSections[Sample][1],crossSections[Sample][1].find("QCD_Pt-15to30Out")
-            #if crossSections[Sample][1].find("QCD_Pt-15to30_antiEMOut")==0 or crossSections[Sample][1].find("QCD_Pt-15to20")==0:
-            #if crossSections[Sample][1].find("QCD_Pt-5to10_antiEMOut_")==0  or crossSections[Sample][1].find("QCD_Pt-10to15_antiEMOut_")==0 or crossSections[Sample][1].find("QCD_Pt-15to30_antiEMOut_")==0 or crossSections[Sample][1].find("QCD_Pt-5to10_EMEnrichedOut_")==0 or crossSections[Sample][1].find("QCD_Pt-10to20_EMEnrichedOut_")==0 or crossSections[Sample][1].find("QCD_Pt-800to1000_MuEnrichedPt5_nofiltOut_")==0 or crossSections[Sample][1].find("QCD_Pt-1000_MuEnrichedPt5_nofiltOut_")==0 :
-            #    continue
             print ""
             
             outDir=os.path.join(OutDir,crossSections[Sample][1])
@@ -255,22 +338,30 @@ if __name__ == '__main__':
             inDir=os.path.join(BaseDirectory,crossSections[Sample][1])
             #if (inDir.find("30to50") > -1 or inDir.find("50to80") > -1 or inDir.find("80to120") > 1
             #or inDir.find("20to30") > -1 or inDir.find("30to80") > -1 or inDir.find("80to170") > -1):
-            if inDir.find("30to50" or "50to80" or "80to120" or "20to30" or "30to80" or "80to170") > -1:
-                inDir=inDir + BS + "_" + RootS + "_DS_" + DS + '_20140912_' + vsn
-            else:
-                inDir=inDir + BS + "_" + RootS + "_DS_" + DS  + "_" + theDate + '_' + vsn
+            #if inDir.find("30to50" or "50to80" or "80to120" or "20to30" or "30to80" or "80to170") > -1:
+            #    inDir=inDir + BS + "_" + RootS + "_DS_" + DS + '_20140912_' + vsn
+            #else:
+            inDir=inDir + BS + "_" + RootS + "_DS_" + DS  + "_" + theDate + '_' + vsn
             if not os.path.isdir(inDir):
                 print "Input directory    " + inDir + "   does not exist -- Exiting"
                 print Sample
                 sys.exit(1)
 
             combinedHist=GetHistsAndAddCounts(inDir,outDir)
+            combinedCorrelHist=GetCorrelHistsAndAddCounts(inDir,outDir)
             rateHist=ConvertToRate(crossSections[Sample][0]*1e-36,combinedHist)
+            rateCorrelHist=ConvertCorrelToRate(crossSections[Sample][0]*1e-36,combinedCorrelHist,combinedHist)
             theRateHists.append(rateHist)
+            theRateHistsCorrel.append(rateCorrelHist)
 
         # now add all the samples together
         if len(theRateHists)>0:
             outfile=os.path.join(OutDir,OutFile)
             AddCounts(theRateHists,outfile,False)
+        else:
+            print "Problem -- no rate histograms were created"
+        if len(theRateHistsCorrel)>0:
+            outfileCorrel=os.path.join(OutDir,OutFileCorrel)
+            AddCorrelCounts(theRateHistsCorrel,outfileCorrel,True)
         else:
             print "Problem -- no rate histograms were created"
