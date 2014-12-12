@@ -231,6 +231,8 @@ BPH:
   HLT_QuadMuon0_Dimuon0_Upsilon_v1
 
 SMP:
+  HLT_IsoTkMu20_eta2p1_IterTrk02_v1
+  HLT_IsoTkMu24_eta2p1_IterTrk02_v1
   HLT_IsoMu27_IterTrk02_v1
   HLT_IsoTkMu27_IterTrk02_v1
   HLT_TkMu24_eta2p1_v1

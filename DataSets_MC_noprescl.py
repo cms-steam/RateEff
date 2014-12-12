@@ -203,8 +203,7 @@ DataSets={
   "HLT_Mu17_Mu8_DZ_v1",
   "HLT_Mu17_TkMu8_DZ_v1",
   "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v1",
-  "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v1",
-  "HLT_IsoTkMu24_eta2p1_IterTrk02_v1"),
+  "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v1"),
 
 
 "BPH":
@@ -234,7 +233,8 @@ DataSets={
   "HLT_QuadMuon0_Dimuon0_Upsilon_v1"),
 
 "SMP":
-  ("HLT_IsoMu27_IterTrk02_v1",
+  ("HLT_IsoMu27_IterTrk02_v1",,
+  "HLT_IsoTkMu24_eta2p1_IterTrk02_v1"
   "HLT_IsoTkMu27_IterTrk02_v1",
   "HLT_Mu27_v1",
   "HLT_TkMu27_v1",
@@ -281,7 +281,6 @@ DataSets={
   "HLT_BTagMu_DiJet40_Mu5_v1",
   "HLT_BTagMu_DiJet70_Mu5_v1",
   "HLT_BTagMu_Jet300_Mu5_v1"),
-
 
 "TSG":
   ("HLT_Physics_v1",
