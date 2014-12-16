@@ -18,11 +18,12 @@ vsn = '721'
 ilumi = 1.4e34
 
 ## DataSets=["BJetPlusX", "BTag", "DoubleElectron", "DoubleMu", "DoublePhoton", "DoublePhotonHighPt", "ElectronHad", "HTMHT", "JetHT", "MET", "MuEG", "MuHad", "MuOnia", "MultiJet", "PhotonHad", "SingleElectron", "SingleMu", "SinglePhoton", "Tau", "TauPlusX"]
-DataSets=['All']
+#DataSets=['All']
+DataSets = ['Higgs', 'B2G', 'EXO', 'SUSY', 'TOP', 'BPH', 'Taus', 'E_GAMMA', 'SMP', 'JET_MET', 'BTV', 'TSG', 'All']
 
 #theDate="20140803"
 #theDate="20140623JustQCD"
-theDate="20141205"
+theDate="20141212"
 
 mfillb = 3564.
 if BS == "50ns":
@@ -38,7 +39,7 @@ else:
 collrate = (nfillb/mfillb)/xtime
 
 #OutDir=os.path.join("resultsByDS" + "_" + RootS +"_"+ theDate + '_no15to30_' + vsn + 'CorrMuCuts',str(ilumi))
-OutDir=os.path.join("resultsByDS" + "_" + RootS + '_20141205_' + vsn + 'wPresc_Pie',str(ilumi))
+OutDir=os.path.join("resultsByDS" + "_" + RootS + "_" + theDate + "_" + vsn,str(ilumi))
 
 from CrossSections import crossSections13TeV
 
@@ -324,7 +325,8 @@ if __name__ == '__main__':
         OutFileCorrel="hltmenu_"+RootS+"_"+BS+"_combinedRate_correlations_"+str(ilumi)+"_"+DS+ '_' + vsn + ".root"
 
         theRateHists=[]
-        theRateHistsCorrel=[]
+        if DS == "All":
+            theRateHistsCorrel=[]
         theSamples=crossSections.keys()
         for Sample in theSamples:
 
@@ -348,11 +350,12 @@ if __name__ == '__main__':
                 sys.exit(1)
 
             combinedHist=GetHistsAndAddCounts(inDir,outDir)
-            combinedCorrelHist=GetCorrelHistsAndAddCounts(inDir,outDir)
             rateHist=ConvertToRate(crossSections[Sample][0]*1e-36,combinedHist)
-            rateCorrelHist=ConvertCorrelToRate(crossSections[Sample][0]*1e-36,combinedCorrelHist,combinedHist)
             theRateHists.append(rateHist)
-            theRateHistsCorrel.append(rateCorrelHist)
+            if DS == "All":
+                combinedCorrelHist=GetCorrelHistsAndAddCounts(inDir,outDir)
+                rateCorrelHist=ConvertCorrelToRate(crossSections[Sample][0]*1e-36,combinedCorrelHist,combinedHist)
+                theRateHistsCorrel.append(rateCorrelHist)
 
         # now add all the samples together
         if len(theRateHists)>0:
@@ -360,8 +363,8 @@ if __name__ == '__main__':
             AddCounts(theRateHists,outfile,False)
         else:
             print "Problem -- no rate histograms were created"
-        if len(theRateHistsCorrel)>0:
+        if DS == "All" and len(theRateHistsCorrel)>0:
             outfileCorrel=os.path.join(OutDir,OutFileCorrel)
             AddCorrelCounts(theRateHistsCorrel,outfileCorrel,True)
-        else:
-            print "Problem -- no rate histograms were created"
+        #else:
+        #    print "Problem -- no rate histograms were created"

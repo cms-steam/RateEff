@@ -3,6 +3,7 @@ from ROOT import TColor, TLine, TLegend, TLatex
 from ROOT import SetOwnership
 
 import sys,string,math,os,ROOT
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 from array import array
 
@@ -12,7 +13,7 @@ from myPyRootMacros import GetHist, PrepLegend, drawErrorBarsUser, DrawText
 
 from DataSets_MC_noprescl import DataSets
 
-DoAll=False
+DoAll=True
 
 UseLowPTQCD=False
 #UseLowPTQCD=True
@@ -22,11 +23,10 @@ UseEnriched=True
 
 ShowCumRate=True
 
-vsn = '700'
-#vsn = '62X'
+vsn = '721'
 
 if not UseLowPTQCD:
-    INPUTDIR1="resultsByDS_13TeV_20141114_700wPresc/1.4e+34"
+    INPUTDIR1="resultsByDS_13TeV_20141212_721/1.4e+34"
     if not UseEnriched:
         INPUTDIR1='resultsByDS_13TeV_20140602_onlyQCD30_' + vsn
 else:
@@ -49,7 +49,7 @@ else:
     #WhichDS="DoubleMu"
     #WhichDS="SinglePhoton"
 
-    WhichDS="JetHT"
+    WhichDS="All"
 
     #WhichDS="DoubleElectron"
     #WhichDS="PhotonHad"
@@ -67,12 +67,10 @@ else:
     #WhichDS="MuEG"
     #WhichDS="noprescl"
 
-    ## WhichDS="MuEGTauPlusXBJetPlusX"
-
 logx=True
 
 
-writePlot=False
+writePlot=True
 # suffix="_MuEnr.gif"
 suffix=".gif"
 
@@ -185,7 +183,7 @@ if __name__ == '__main__':
 
 
 
-    outDir="newplots/MCs13_" + vsn + "_wPresc"
+    outDir="Plots/MC13_" + vsn + "_NoMuEnr1212"
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
@@ -380,16 +378,16 @@ if __name__ == '__main__':
     for ibin in range(1,nbins+1):
 
         if ShowCumRate: 
-            twstring = "| " + "!" + str(h1.GetXaxis().GetBinLabel(ibin)) + " | " + "!" + str(h1L1names.GetXaxis().GetBinLabel(ibin)) + " | " + str(h1L1presc.GetXaxis().GetBinLabel(ibin)) + " | " + str(h1HLTpresc.GetXaxis().GetBinLabel(ibin)) + " | " + str('{0:.2f}'.format(hist1.GetBinContent(ibin))) + "+-" + str('{0:.2f}'.format(hist1.GetBinError(ibin))) + " | " +  str('{0:.2f}'.format(h1cum.GetBinContent(ibin))) + "+-" + str('{0:.2f}'.format(h1cum.GetBinError(ibin))) + " | "
+            twstring = "| " + "!" + str(h1.GetXaxis().GetBinLabel(ibin)) + " | " + "!" + str(h1L1names.GetXaxis().GetBinLabel(ibin)) + " | " + str(h1L1presc.GetXaxis().GetBinLabel(ibin)) + " | " + str(h1HLTpresc.GetXaxis().GetBinLabel(ibin)) + " | " + str('{0:.2f}'.format(h1.GetBinContent(ibin))) + "+-" + str('{0:.2f}'.format(h1.GetBinError(ibin))) + " | " +  str('{0:.2f}'.format(h1cum.GetBinContent(ibin))) + "+-" + str('{0:.2f}'.format(h1cum.GetBinError(ibin))) + " | "
             twfile.write(twstring + "\n")
         else: 
-            twstring = "| " + "!" + str(h1.GetXaxis().GetBinLabel(ibin)) + " | " + "!" + str(h1L1names.GetXaxis().GetBinLabel(ibin)) + " | " + str(h1L1presc.GetXaxis().GetBinLabel(ibin)) + " | " + str(h1HLTpresc.GetXaxis().GetBinLabel(ibin)) + " | " + str('{0:.2f}'.format(hist1.GetBinContent(ibin))) + "+-" + str('{0:.2f}'.format(hist1.GetBinError(ibin))) + " | "
+            twstring = "| " + "!" + str(h1.GetXaxis().GetBinLabel(ibin)) + " | " + "!" + str(h1L1names.GetXaxis().GetBinLabel(ibin)) + " | " + str(h1L1presc.GetXaxis().GetBinLabel(ibin)) + " | " + str(h1HLTpresc.GetXaxis().GetBinLabel(ibin)) + " | " + str('{0:.2f}'.format(h1.GetBinContent(ibin))) + "+-" + str('{0:.2f}'.format(h1.GetBinError(ibin))) + " | "
             twfile.write(twstring + "\n")
 
 
-    twfile.write("| Total Cumulative Dataset Rate | " + str('{0:.2f}'.format(cum1Tot)) + " +- " + str('{0:.2f}'.format(cum1Toterr)) + " | "+ "\n")
+    #twfile.write("| Total Cumulative Dataset Rate | " + str('{0:.2f}'.format(cum1Tot)) + " +- " + str('{0:.2f}'.format(cum1Toterr)) + " | "+ "\n")
     #twfile.write("| Total Cumulative Dataset Rate | " + str('{0:.2f}'.format(cum13Tot)) + " | "+ "\n")
-    twfile.write("| <center> <img height=\"220/\" alt=\"\" src=\"%ATTACHURL%" + outplot + ".gif\" /> </center> <br> <center> [[%ATTACHURL%" + outplot + ".gif][Click for full size Figure]] </center> |" + "\n")
+    #twfile.write("| <center> <img height=\"220/\" alt=\"\" src=\"%ATTACHURL%" + outplot + ".gif\" /> </center> <br> <center> [[%ATTACHURL%" + outplot + ".gif][Click for full size Figure]] </center> |" + "\n")
 
     c1.Modified()
     c1.Update()
@@ -404,5 +402,5 @@ if __name__ == '__main__':
 
     if os.getenv("FROMGUI") == None:
         print "Not from GUI"
-        if not DoAll:
-            raw_input('\npress return to end the program...')
+        #if not DoAll:
+            #raw_input('\npress return to end the program...')

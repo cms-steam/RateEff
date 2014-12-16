@@ -1,10 +1,11 @@
 import math,ROOT,sys,os
 from ROOT import gROOT, TFile, TChain, TAxis, TTree, TH1F, TF1,SetOwnership, TObjString, TString
 
-BaseDirectory="/uscms/physics_grp/lpctrig/ingabu/TMD/GetCounts"
+BaseDirectory="/uscms/physics_grp/lpctrig/ingabu/TMD/Daniels/"
 #BaseDirectory="./"
 
-theLabels=["QCD30to50","QCD50to80","QCD80to120","QCD120to170","QCD170to300","QCD300to470","QCD470to600","QCD600to800","QCD800to1000","QCD1000to1400", "QCD1400to1800","EMEnr20to30","EMEnr30to80","EMEnr80to170","MuEnr20to30","MuEnr30to50","MuEnr50to80","MuEnr80to120","WToENu","ZToEE","WToMuNu","ZToMuMu"]
+#theLabels=["QCD30to50","QCD50to80","QCD80to120","QCD120to170","QCD170to300","QCD300to470","QCD470to600","QCD600to800","QCD800to1000","QCD1000to1400", "QCD1400to1800", "EMEnr30to80","EMEnr80to170","MuEnr30to50","MuEnr50to80","MuEnr80to120","WToENu","ZToEE","WToMuNu","ZToMuMu"]
+theLabels=["QCD30to50","QCD50to80","QCD80to120","QCD120to170","QCD170to300","QCD300to470","QCD470to600","QCD600to800","QCD800to1000","QCD1000to1400", "QCD1400to1800","QCD1800","EMEnr30to80","EMEnr80to170","WToENu","ZToEE","WToMuNu","ZToMuMu"]
 
 RootS="13TeV"
 ## RootS="8TeV"
@@ -12,7 +13,7 @@ RootS="13TeV"
 ## BS="50ns"
 BS="25ns"
 
-vsn = '700'
+vsn = '721'
 #vsn = '62X'
 #vsn='53X'
 
@@ -20,15 +21,15 @@ vsn = '700'
 # ilumi = 5.3e33  # run 207884
 # ilumi = 3.12e33 # run 207889
 # ilumi = 1.7e34 # projected lumi for 13 TeV
-ilumi = 1.1e34 # projected lumi for 13 TeV, 25 ns bunch spacing
+ilumi = 1.4e34 # projected lumi for 13 TeV, 25 ns bunch spacing
 
-DataSets=["BJetPlusX", "BTag", "DoubleElectron", "DoubleMu", "DoublePhoton", "DoublePhotonHighPt", "ElectronHad", "HTMHT", "JetHT", "MET", "MuEG", "MuHad", "MuOnia", "MultiJet", "PhotonHad", "SingleElectron", "SingleMu", "SinglePhoton", "Tau", "TauPlusX"]
-##DataSets=['noprescl', 'BJetPlusX', 'BTag', 'DoubleElectron', 'DoubleMu', 'DoublePhoton', 'DoublePhotonHighPt', 'ElectronHad', 'HTMHT', 'JetHT', 'MET', 'MuEG', 'MuHad', 'MuOnia', 'MultiJet', 'PhotonHad', 'SingleElectron', 'SingleMu', 'SinglePhoton', 'Tau', 'TauPlusX']
-
+#DataSets=['Higgs', 'B2G', 'EXO', 'SUSY', 'TOP', 'BPH', 'Taus', 'E_GAMMA','SMP', 'JET_MET', 'BTV']
+DataSets=['All']
 #theDate="20131029"
 ## theDate="20131128"
 #theDate="20140623JustQCD"
-theDate="20140803"
+#theDate="20140803"
+theDate="20141212"
 
 mfillb = 3564.
 if BS == "50ns":
@@ -43,7 +44,8 @@ else:
 
 collrate = (nfillb/mfillb)/xtime
 
-OutDir=os.path.join(BaseDirectory,"resultsByDS" + "_" + RootS +"_"+ theDate + '_no15to30_' + vsn + 'CorrMuCuts',str(ilumi))
+#OutDir=os.path.join(BaseDirectory,"resultsByDS" + "_" + RootS +"_"+ theDate + '_no15to30_' + vsn + 'CorrMuCutsPerSample',str(ilumi))
+OutDir=os.path.join(BaseDirectory,"resultsByDS" + "_" + RootS +"_"+ theDate +"_"+ vsn,str(ilumi))
 
 from CrossSections import crossSections13TeV
 
@@ -74,7 +76,7 @@ def AddCounts(rootFiles,outfile,sumEvents=True):
     histlist=[]
     i=-1
     handles=[]
-    for f in rootFiles:
+    for f in rootFiles:   #each rootfile is for a sample
         i+=1
         print i,f
         fstart=f.split('/')
@@ -95,6 +97,9 @@ def AddCounts(rootFiles,outfile,sumEvents=True):
             nevt = infile.Get("NEVTS")
         
         if i==0:
+            hRatePerSample=TH1F('ratepersample' , 'Cumulative Rate Per Sample ',len(rootFiles),0,float(len(rootFiles)))
+            hRatePerSample.Sumw2()
+            
             for path in histInd.GetXaxis().GetLabels():
                 name=path.GetString().Data()
                 h=TH1F( name[:name.rfind("_")] , 'Rates for ' + name, len(theLabels), 0, float(len(theLabels)) )
@@ -126,10 +131,13 @@ def AddCounts(rootFiles,outfile,sumEvents=True):
             histInd_all.Add(histInd)
             histCum_all.Add(histCum)
             if sumEvents: NEVTS.Add(nevt)
-
+        hRatePerSample.GetXaxis().SetBinLabel(i+1,thelabel);
+        hRatePerSample.SetBinContent(i+1,histCum.GetBinContent(histCum.GetNbinsX())) 
+        hRatePerSample.SetBinError(i+1,histCum.GetBinError(histCum.GetNbinsX()))
     outf.cd()
     histInd_all.Write()
     histCum_all.Write()
+    hRatePerSample.Write()
     for h in histlist:
         h.Write()
     if sumEvents: NEVTS.Write()
@@ -160,11 +168,6 @@ if __name__ == '__main__':
         theSamples=crossSections.keys()
         for Sample in sorted(theSamples):
 
-            ## print crossSections[Sample][1],crossSections[Sample][1].find("QCD_Pt-15to30Out")
-            #if crossSections[Sample][1].find("QCD_Pt-15to30_antiEMOut")==0 or crossSections[Sample][1].find("QCD_Pt-15to20")==0:
-            #if crossSections[Sample][1].find("QCD_Pt-5to10_antiEMOut_")==0  or crossSections[Sample][1].find("QCD_Pt-10to15_antiEMOut_")==0 or crossSections[Sample][1].find("QCD_Pt-15to30_antiEMOut_")==0 or crossSections[Sample][1].find("QCD_Pt-5to10_EMEnrichedOut_")==0 or crossSections[Sample][1].find("QCD_Pt-10to20_EMEnrichedOut_")==0 or crossSections[Sample][1].find("QCD_Pt-800to1000_MuEnrichedPt5_nofiltOut_")==0 or crossSections[Sample][1].find("QCD_Pt-1000_MuEnrichedPt5_nofiltOut_")==0 :
-            #    continue
-#            print ""
             
             inDir=os.path.join(OutDir,crossSections[Sample][1])
             inDir=inDir + BS + "_" + RootS + "_DS_" + DS + '_' + vsn
@@ -174,14 +177,14 @@ if __name__ == '__main__':
                 print Sample
                 sys.exit(1)
 
-            rateHist=os.path.join(inDir,'hltmenu_'+RootS+'_8.0e33_'+theDate+'_rates.root')
+            rateHist=os.path.join(inDir,'hltmenu_'+RootS+'_1.4e34_'+theDate+'_rates.root')
 #            rateHist=os.path.join(inDir,'hltmenu_'+RootS+'_7.0e33_20140129_rates.root')
 # list of rootfiles containing full sample rates for a dataset
             theRateHists.append(rateHist)
 
         # now add all the samples together
         if len(theRateHists)>0:
-            FinalDir='/uscms/physics_grp/lpctrig/ingabu/TMD/GetCounts/Muriel/0803CorrMuCuts/'
+            FinalDir='./RatePerSample'
             outfile=os.path.join(FinalDir,OutFile)
 # adds the rates of all the samples for one dataset
             AddCounts(theRateHists,outfile,False)
