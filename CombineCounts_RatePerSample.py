@@ -13,15 +13,12 @@ RootS="13TeV"
 ## BS="50ns"
 BS="25ns"
 
-vsn = '721'
+vsn = '731'
 #vsn = '62X'
 #vsn='53X'
 
-# ilumi = 5.5e33  # run 196532
-# ilumi = 5.3e33  # run 207884
-# ilumi = 3.12e33 # run 207889
-# ilumi = 1.7e34 # projected lumi for 13 TeV
-ilumi = 1.4e34 # projected lumi for 13 TeV, 25 ns bunch spacing
+#ilumi = 1.4e34 # projected lumi for 13 TeV, 25 ns bunch spacing
+ilumi = 7.0e33
 
 #DataSets=['Higgs', 'B2G', 'EXO', 'SUSY', 'TOP', 'BPH', 'Taus', 'E_GAMMA','SMP', 'JET_MET', 'BTV']
 DataSets=['All']
@@ -177,7 +174,7 @@ if __name__ == '__main__':
                 print Sample
                 sys.exit(1)
 
-            rateHist=os.path.join(inDir,'hltmenu_'+RootS+'_1.4e34_'+theDate+'_rates.root')
+            rateHist=os.path.join(inDir,'hltmenu_'+RootS+'_7.0e33_'+theDate+'_rates.root')
 #            rateHist=os.path.join(inDir,'hltmenu_'+RootS+'_7.0e33_20140129_rates.root')
 # list of rootfiles containing full sample rates for a dataset
             theRateHists.append(rateHist)

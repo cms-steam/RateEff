@@ -1,7 +1,7 @@
 import os, sys, string, math, ROOT
 from ROOT import TH1,TAxis,TFile, TPie, TColor,TCanvas, gStyle, gROOT, TPad, TLegend
 
-infile = "RatePerSample/hltmenu_13TeV_25ns_combinedRate_1.4e+34_All_721.root"
+infile = "RatePerSample/hltmenu_13TeV_25ns_combinedRate_1.4e+34_All_721_withEff.root"
 
 savegif = True
 gStyle.SetLegendFont(102)
@@ -55,14 +55,23 @@ for i in range(0,len(slv)):
 
 leg.Draw()
 
+la=ROOT.TLatex()
+la.SetNDC()
+la.SetTextAlign(11)
+la.SetTextSize(0.05)
+
+la.SetTextColor(ROOT.kGreen+3) 
+xt=.7; yt=.85
+la.DrawLatex(xt,yt, "With Filter");
+la.DrawLatex(xt,yt-.06, "With 15-30");
 
 c.Update()
 
-outDir="Plots"
+outDir="newplots/15to1000wandwoutSilviosCorr/withEff"
 if not os.path.exists(outDir):
     os.makedirs(outDir)
 
-outfile=os.path.join(outDir,"pie")
+outfile=os.path.join(outDir,"RPSpiewfilt15to1000_withEff")
 
 if savegif: 
     plot=outfile + ".gif"

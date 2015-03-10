@@ -1,7 +1,7 @@
 import os, sys, string, math, ROOT
 from ROOT import TFile, TPie, TCanvas, gStyle, gROOT, TPad, TLegend
 
-infile = "/uscms/physics_grp/lpctrig/ingabu/TMD/Daniels/resultsByDS_13TeV_20141212_721/1.4e+34/hltmenu_13TeV_25ns_combinedRate_correlations_1.4e+34_All_721.root"
+infile = "/uscms/physics_grp/lpctrig/ingabu/TMD/Silvio/resultsByDS_13TeV_20150122_721_withEff/1.4e+34/hltmenu_13TeV_25ns_combinedRate_correlations_1.4e+34_All_721.root"
 
 savegif = True
 
@@ -105,14 +105,23 @@ leg.AddEntry(pie.GetSlice(11),  sl11l + ' ' + '%1.2f' %sl11v + ' ' + '(%1.2f' %s
 
 leg.Draw()
 
+la=ROOT.TLatex()
+la.SetNDC()
+la.SetTextAlign(11)
+la.SetTextSize(0.05)
+
+la.SetTextColor(ROOT.kGreen+3) 
+xt=.7; yt=.85
+la.DrawLatex(xt,yt, "With Filter");
+la.DrawLatex(xt,yt-.06, "With 15-30");
 
 c.Update()
 
-outDir="Plots"
+outDir="newplots/15to1000wandwoutSilviosCorr/withEff"
 if not os.path.exists(outDir):
     os.makedirs(outDir)
 
-outfile=os.path.join(outDir,"pie")
+outfile=os.path.join(outDir,"piewithfilt15to1000_withEff")
 
 if savegif: 
     plot=outfile + ".gif"

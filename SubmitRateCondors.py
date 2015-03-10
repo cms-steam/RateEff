@@ -4,23 +4,23 @@ condorFile = 'condor_rates.csh'
 submitFile = 'CondorJob.cfg'
  
 DOMUCUTS = 'false'   ## set to true in "if statement below" for bins 80-120 and below
-DOELECUTS = 'false'
+DOELECUTS = 'false' #not used anymore
+DOMUCUTSFORMUONS = 'false'  # set to true to get rid of events with no muons in them for MuEnriched samples
 
 bs = '25ns'
 #vsn = '721'
-vsn = '721'
+vsn = '731'
 rs = '13TeV'
-theDate = '20141205'
+theDate = '20150122'
 #theDate = '20141028'
 
 #Bins = ['QCD_Pt-50to80_MuEnrichedPt5_antiEM']
-#'QCD_Pt-30to50_nofilt', 'QCD_Pt-50to80_nofilt', 'QCD_Pt-80to120_nofilt', 'QCD_Pt-120to170_nofilt',
-#Bins = ['QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt']
-#Bins = ['QCD_Pt-30to80_EMEnriched', 'QCD_Pt-80to170_EMEnriched']
-#Bins = ['QCD_Pt-15to20_MuEnrichedPt5_antiEM', 'QCD_Pt-20to30_MuEnrichedPt5_antiEM', 'QCD_Pt-30to50_MuEnrichedPt5_antiEM', 'QCD_Pt-50to80_MuEnrichedPt5_antiEM', 'QCD_Pt-80to120_MuEnrichedPt5_antiEM', 'QCD_Pt-120to170_MuEnrichedPt5_antiEM', 'QCD_Pt-170to300_MuEnrichedPt5_nofilt', 'QCD_Pt-300to470_MuEnrichedPt5_nofilt', 'QCD_Pt-470to600_MuEnrichedPt5_nofilt', 'QCD_Pt-600to800_MuEnrichedPt5_nofilt', 'QCD_Pt-800to1000_MuEnrichedPt5_nofilt', 'QCD_Pt-1000_MuEnrichedPt5_nofilt']
 #Bins = ['WToMuNu', 'WToENu', 'DYToEE', 'DYToMuMu']
-Bins = [ 'QCD_Pt-30to50_antiEM', 'QCD_Pt-50to80_antiEM', 'QCD_Pt-80to120_antiEM', 'QCD_Pt-120to170_antiEM', 'QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt', 'QCD_Pt-1000to1400_nofilt', 'QCD_Pt-1400to1800_nofilt', 'QCD_Pt-1800_nofilt',  'QCD_Pt-30to80_EMEnriched', 'QCD_Pt-80to170_EMEnriched', 'QCD_Pt-30to50_MuEnrichedPt5_antiEM', 'QCD_Pt-50to80_MuEnrichedPt5_antiEM', 'QCD_Pt-80to120_MuEnrichedPt5_antiEM','WToMuNu', 'WToENu', 'DYToEE', 'DYToMuMu']
+#Bins = [ 'QCD_Pt-30to50_antiEM', 'QCD_Pt-50to80_antiEM', 'QCD_Pt-80to120_antiEM', 'QCD_Pt-120to170_antiEM', 'QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt', 'QCD_Pt-1000to1400_nofilt', 'QCD_Pt-1400to1800_nofilt', 'QCD_Pt-1800_nofilt',  'QCD_Pt-30to80_EMEnriched', 'QCD_Pt-80to170_EMEnriched', 'QCD_Pt-30to50_MuEnrichedPt5_antiEM', 'QCD_Pt-50to80_MuEnrichedPt5_antiEM', 'QCD_Pt-80to120_MuEnrichedPt5_antiEM','WToMuNu', 'WToENu', 'DYToEE', 'DYToMuMu']
+#Bins = [ 'QCD_Pt-15to30_nofilt', 'QCD_Pt-30to50_antiEM', 'QCD_Pt-50to80_antiEM', 'QCD_Pt-80to120_antiEM', 'QCD_Pt-120to170_antiEM', 'QCD_Pt-170to300_nofilt', 'QCD_Pt-300to470_nofilt', 'QCD_Pt-470to600_nofilt', 'QCD_Pt-600to800_nofilt', 'QCD_Pt-800to1000_nofilt', 'QCD_Pt-1000to1400_nofilt', 'QCD_Pt-30to80_EMEnriched', 'QCD_Pt-80to170_EMEnriched', 'WToMuNu', 'WToENu', 'DYToEE', 'DYToMuMu']
+Bins = ['QCD_Pt-30to50_MuEnrichedPt5_antiEM']
 
+#DS = ['Higgs', 'B2G', 'EXO', 'SUSY', 'TOP', 'BPH', 'Taus', 'E_GAMMA', 'SMP', 'JET_MET', 'BTV', 'All']
 DS = ['All']
 
 
@@ -37,15 +37,21 @@ for b in range(len(Bins)):
         if not os.path.exists(newDir2):
             os.makedirs(newDir2)
 
-        #if(Bins[b]=='QCD_Pt-120to170_antiEM'):
-        if(Bins[b]=='QCD_Pt-30to50_MuEnrichedPt5_antiEM' or Bins[b] == 'QCD_Pt-50to80_MuEnrichedPt5_antiEM' or Bins[b] == 'QCD_Pt-80to120_MuEnrichedPt5_antiEM' or Bins[b] == 'QCD_Pt-120to170_antiEM' or Bins[b] == 'QCD_Pt-170to300_nofilt' or Bins[b] == 'QCD_Pt-300to470_nofilt' or Bins[b] == 'QCD_Pt-470to600_nofilt' or Bins[b] == 'QCD_Pt-600to800_nofilt' or Bins[b] == 'QCD_Pt-800to1000_nofilt' or Bins[b] =='QCD_Pt-1000to1400_nofilt' or Bins[b] =='QCD_Pt-1400to1800_nofilt' or Bins[b] =='QCD_Pt-1800_nofilt'):
-            DOMUCUTS = 'false'
-            BASENAME1 = '/eos/uscms/store/user/lpctrig/dansand/STEAM/NTuples_721_PU40bx25_HCAL/' + Bins[b] + '_Tune4C_' + rs + '_pythia8/'
-        elif (Bins[b] == 'WToMuNu' or Bins[b] == 'WToENu' or Bins[b] == 'DYToEE' or Bins[b] == 'DYToMuMu'):
-            DOMUCUTS = 'false'
-            BASENAME1 = '/eos/uscms/store/user/lpctrig/dansand/STEAM/NTuples_721_PU40bx25_HCAL/' + Bins[b]+ '_Tune4C_' + rs + '-pythia8/'
-        elif (Bins[b] == 'QCD_Pt-30to50_antiEM' or Bins[b] =='QCD_Pt-50to80_antiEM' or Bins[b]== 'QCD_Pt-80to120_antiEM' or Bins[b]=='QCD_Pt-30to80_EMEnriched' or Bins[b]=='QCD_Pt-80to170_EMEnriched'):
+        if (Bins[b] == 'QCD_Pt-30to50_antiEM' or Bins[b] =='QCD_Pt-50to80_antiEM' or Bins[b]== 'QCD_Pt-80to120_antiEM'):
             DOMUCUTS = 'true'
+            DOMUCUTSFORMUONS = 'false'
+            BASENAME1 = '/eos/uscms/store/user/lpctrig/ingabu/TMDNtuples/SilviosFilter/' + Bins[b] + '_Tune4C_' + rs + '_pythia8/'
+        elif (Bins[b] == 'WToMuNu' or Bins[b] == 'WToENu' or Bins[b] == 'DYToMuMu' or Bins[b] == 'DYToEE'):
+            DOMUCUTS = 'false'
+            DOMUCUTSFORMUONS = 'false'
+            BASENAME1 = '/eos/uscms/store/user/lpctrig/dansand/STEAM/NTuples_721_PU40bx25_HCAL/' + Bins[b] + '_Tune4C_' + rs + '-pythia8/'
+        elif (Bins[b] == 'QCD_Pt-30to50_MuEnrichedPt5_antiEM' or Bins[b] == 'QCD_Pt-50to80_MuEnrichedPt5_antiEM' or Bins[b] == 'QCD_Pt-80to120_MuEnrichedPt5_antiEM'):
+            DOMUCUTS = 'false'
+            DOMUCUTSFORMUONS = 'true'
+            BASENAME1 = '/eos/uscms/store/user/lpctrig/dansand/STEAM/NTuples_721_PU40bx25_HCAL/' + Bins[b] + '_Tune4C_' + rs + '_pythia8/'
+        else:
+            DOMUCUTS = 'false'
+            DOMUCUTSFORMUONS = 'false'
             BASENAME1 = '/eos/uscms/store/user/lpctrig/dansand/STEAM/NTuples_721_PU40bx25_HCAL/' + Bins[b] + '_Tune4C_' + rs + '_pythia8/'
 
 
@@ -58,6 +64,7 @@ for b in range(len(Bins)):
         e = r   #end file
             
         allfiles = glob.glob(BASENAME1 + "*" + vsn + "*.root")
+        #allfiles = glob.glob(BASENAME1 + "hltbitanalysis721_262_1_m9b.root")
         af = []
         for allf in allfiles:
             af.append(allf.split('/')[-1])
@@ -90,6 +97,7 @@ for b in range(len(Bins)):
             subprocess.call('sed -i \'s/BASEFILES/' + inf + '/g\'' + ' ' + newDir + '/' + cfgFileNew, shell=True)
             subprocess.call('sed -i \'s/ABCD/' + DOMUCUTS + '/g\'' + ' ' + newDir + '/' + cfgFileNew, shell=True)
             subprocess.call('sed -i \'s/EFGH/' + DOELECUTS + '/g\'' + ' ' + newDir + '/' + cfgFileNew, shell=True)
+            subprocess.call('sed -i \'s/IJKL/' + DOMUCUTSFORMUONS + '/g\'' + ' ' + newDir + '/' + cfgFileNew, shell=True)
             subprocess.call('sed -i \'s/VERSIONTAG/' + theDate + '/g\'' + ' ' + newDir + '/' + cfgFileNew, shell=True)
 
             subprocess.call('sed -i \'s/THEMENU/' + cfgFileNew + '/g\'' + ' ' + newDir + '/' + submitFile, shell=True)

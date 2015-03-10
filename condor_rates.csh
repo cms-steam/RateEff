@@ -11,12 +11,12 @@ echo "CONDOR_SCRATCH_DIR: $_CONDOR_SCRATCH_DIR"
 echo "-------------------------------"
 
 ## Project area: 
-setenv INGA /uscms_data/d3/ingabu/TMD/CMSSW_7_2_0_pre8/src/HLTrigger/HLTanalyzers/test/RateEff
-cd $INGA
+setenv JINGYU /uscms_data/d3/jingyu/TMD/CMSSW_7_3_1_patch1/src/HLTrigger/HLTanalyzers/test/RateEff
+cd $JINGYU
 echo "Project dir: " 
 pwd
-source /uscmst1/prod/sw/cms/setup/cshrc prod
-setenv SCRAM_ARCH slc6_amd64_gcc481
+source /cvmfs/cms.cern.ch/cmsset_default.csh
+setenv SCRAM_ARCH slc6_amd64_gcc491
 eval `scram runtime -csh`
 source setup.csh
 ##
@@ -41,7 +41,7 @@ echo -n " ---- Configuration file ------------"
 echo 
 cat $CFG
 
-$INGA/OHltRateEff $CFG
+$JINGYU/OHltRateEff $CFG
 
 echo "Directory contents after job"
 echo 
@@ -51,9 +51,9 @@ echo "---------------------------"
 echo
 rm -f *.tex
 rm -f MyEffHist*.root
-mv hltmenu_13TeV_1.4e34_${VTAG}.root hltmenu_${rs}_1.4e34_${VTAG}_$whichproc.root
-mv hltmenu_13TeV_1.4e34_${VTAG}.twiki hltmenu_${rs}_1.4e34_${VTAG}_$whichproc.twiki
-mv PATH_PAGv2_correlations.root PATH_PAGv2_correlations_${rs}_${VTAG}_$whichproc.root
+mv hltmenu_13TeV_7.0e33_${VTAG}.root hltmenu_${rs}_7e33_${VTAG}_$whichproc.root
+mv hltmenu_13TeV_7.0e33_${VTAG}.twiki hltmenu_${rs}_7e33_${VTAG}_$whichproc.twiki
+mv PATH_PAGv3_correlations.root PATH_PAGv3_correlations_${rs}_${VTAG}_$whichproc.root
 
 echo "Job finished on `date`" 
 

@@ -10,12 +10,12 @@ RootS="13TeV"
 ## BS="50ns"
 BS="25ns"
 
-vsn = '721'
+vsn = '731'
 #vsn = '62X'
 
 # ilumi = 1.7e34 # projected lumi for 13 TeV
 #ilumi = 1.1e34 # projected lumi for 13 TeV, 25 ns bunch spacing
-ilumi = 1.4e34
+ilumi = 7.0e33
 
 ## DataSets=["BJetPlusX", "BTag", "DoubleElectron", "DoubleMu", "DoublePhoton", "DoublePhotonHighPt", "ElectronHad", "HTMHT", "JetHT", "MET", "MuEG", "MuHad", "MuOnia", "MultiJet", "PhotonHad", "SingleElectron", "SingleMu", "SinglePhoton", "Tau", "TauPlusX"]
 #DataSets=['All']

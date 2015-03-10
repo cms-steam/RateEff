@@ -3,27 +3,29 @@ from ROOT import TColor, TLine, TLegend, TLatex
 from ROOT import SetOwnership
 
 import sys,string,math,os,ROOT
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 from array import array
-from CombineCounts_Muriel import theLabels
 sys.path.append(os.path.join(os.environ.get("HOME"),'rootmacros'))
 from myPyRootSettings import prepPlot
 from myPyRootMacros import GetHist, PrepLegend, drawErrorBarsUser, DrawText
 
 from DataSets_MC_noprescl import DataSets
 
-DoAll=False
+theLabels=["QCD15to30","QCD30to50","QCD50to80","QCD80to120","QCD120to170","QCD170to300","QCD300to470","QCD470to600","QCD600to800","QCD800to1000","EMEnr30to80","EMEnr80to170","WToENu","ZToEE","WToMuNu","ZToMuMu"]
 
-UseLowPTQCD=False
-#UseLowPTQCD=True
+DoAll=True
+
+#UseLowPTQCD=False
+UseLowPTQCD=True
 
 UseEnriched=True
 ## UseEnriched=False
 
-vsn2 = '700'
-vsn1 = '53X'
+vsn1 = '721_withEff'
+vsn2 = '721_WithPU'
 
-INPUTDIR='Muriel/0803CorrMuCuts'
+INPUTDIR='RatePerSample'
 #INPUTDIR2='700'
 
 
@@ -38,7 +40,7 @@ else:
     #WhichDS="HTMHT"
     #WhichDS="DoublePhoton"
     #WhichDS="DoublePhotonHighPt"
-    WhichDS="DoubleMu"
+    WhichDS="All"
     #WhichDS="SinglePhoton"
 
     #WhichDS="JetHT"
@@ -164,25 +166,36 @@ if __name__ == '__main__':
 
 
     print "XXXXXXXXXXXXXXXXX -- ",INPUTDIR
-    MCFile1 = os.path.join(INPUTDIR,"hltmenu_13TeV_25ns_combinedRate_1.1e+34_" + WhichDS + '_' + vsn1 + "_53XCr.root")
-    MCFile2 = os.path.join(INPUTDIR,"hltmenu_13TeV_25ns_combinedRate_1.1e+34_" + WhichDS + '_' + vsn2 + ".root")
+    MCFile1 = os.path.join(INPUTDIR,"hltmenu_13TeV_25ns_combinedRate_1.4e+34_" + WhichDS + '_' + vsn1 + ".root")
+    MCFile2 = os.path.join(INPUTDIR,"hltmenu_13TeV_25ns_combinedRate_1.4e+34_" + WhichDS + '_' + vsn2 + ".root")
 
     ScaleMC=1.
 
     
 
     theTriggers=DataSets[WhichDS]
-    outDir="newplots/MCs13New700vs13Old_TEST"
+    outDir="newplots/RatePerSample/15to1000wandwoutSilviosCorr/withEff"
     if not os.path.exists(outDir):
         os.makedirs(outDir)    
     for trig in theTriggers:
+
         hname=trig[:trig.rfind("_v")]
+        #if hname == 'HLT_LooseIsoPFTau50_Trk30_eta2p1' or hname == 'HLT_Mu3er_PFHT140_PFMET125_NoiseCleaned' or hname == 'HLT_RsqMR300_Rsq0p09_MR200' or hname == 'HLT_RsqMR300_Rsq0p09_MR200_4jet' or hname == 'HLT_Rsq0p36' or hname == 'HLT_DoubleEle33_CaloIdL_GsfTrkIdVL' or hname == 'HLT_JetE30_NoBPTX3BX_NoHalo' or hname == 'HLT_JetE30_NoBPTX' or hname == 'HLT_JetE50_NoBPTX3BX_NoHalo': continue
         print "studying ", hname
         hist1=GetHist(MCFile1,hname)
         hist1.SetFillColor(ROOT.kRed-7)
         hist2=GetHist(MCFile2,hname)
         hist2.SetFillColor(ROOT.kBlue)
         print vsn1,hist1.GetEntries(), vsn2, hist2.GetEntries()
+
+        count = 0
+        for b in range(0,int(hist1.GetEntries())):
+            #print "b ", b, " " , hist1.GetBinContent(b)
+            if hist1.GetBinContent(b) == 0.:
+                count += 1
+        #print "count of bins with zero rate: ", count
+        if count == hist1.GetEntries(): continue
+
         outplot= WhichDS +"_"+hname
         outfile=os.path.join(outDir,outplot)
         print outfile+suffix
@@ -243,8 +256,7 @@ if __name__ == '__main__':
         print "minbin=",i1," maxbin=",i2
         drawErrorBarsUser(p1,hist1,i1,i2,0.15,minRate)
         drawErrorBarsUser(p1,hist2,i1,i2,-0.25,minRate)
-    ## drawErrorBars(p1,h2,-0.15)
-
+        ## drawErrorBars(p1,h2,-0.15)
 
 
         xl2=xl1+.2; yl2=yl1+.085;
@@ -261,17 +273,21 @@ if __name__ == '__main__':
         header=hname
         xt=xl1-.01; yt=yl1+0.85
         la.DrawLatex(xt,yt, header);
-        la.DrawLatex(xt,yt-0.03, "L=1.1e34 Hz/cm^{2}");
+        la.DrawLatex(xt,yt-0.03, "L=1.4e34 Hz/cm^{2}");
         if not UseLowPTQCD:
-            la.DrawLatex(xt,yt-0.03-0.03, "no Low PT QCD");
+            la.DrawLatex(xt,yt-0.03-0.03, "no 15-30 PT QCD");
+        if UseLowPTQCD:
+            la.DrawLatex(xt,yt-0.03-0.03, "with 15-30 PT QCD");
             
         if not UseEnriched:
             la.DrawLatex(xt+0.2,yt-0.03-0.03, "no Enriched QCD");
 
 
 
-        leg.AddEntry(hist2,"62XMC-HLT700-Frozen2013","f");
-        leg.AddEntry(hist1,"53XMC-HLT53X-8e33V2","f");
+        #leg.AddEntry(hist2,"62XMC-HLT700-Frozen2013","f");
+        #leg.AddEntry(hist1,"53XMC-HLT53X-8e33V2","f");
+        leg.AddEntry(hist1,"62XMC-HLT721 with Filter","f");
+        leg.AddEntry(hist2,"62XMC-HLT721 no Filter","f");
         leg.SetTextSize(0.026);    
         leg.Draw();
 
@@ -288,11 +304,11 @@ if __name__ == '__main__':
     ## hRat.SetName("8TeV/13TeV")
     ## hRat.Divide(h1,h2,1.,1.,"");
 
-        hRat.SetName("Ratio 700/53X")
-        hRat.Divide(hist2,hist1,1.,1.,"");
+        hRat.SetName("Ratio wFilt/noFilt")
+        hRat.Divide(hist1,hist2,1.,1.,"");
 
     ## hRat.GetYaxis().SetTitle("8TeV/13TeV");
-        hRat.GetYaxis().SetTitle("Ratio 700/53X");
+        hRat.GetYaxis().SetTitle("Ratio wFilt/noFilt");
         hRat.GetYaxis().SetTitleOffset(.3);
         hRat.GetYaxis().SetLabelOffset(-.05);
 
@@ -328,6 +344,7 @@ if __name__ == '__main__':
         ey=array( 'd' )
         maxx=0
         n=0
+
         for ibin in range(1,hRat.GetNbinsX()+1):
             if hRat.GetBinError(ibin) == 0 and hRat.GetBinContent(ibin) == 0 :
                 print 'skipping'
@@ -355,7 +372,9 @@ if __name__ == '__main__':
         gr.SetLineColor(ROOT.kBlue)
         gr.SetMarkerSize(1.2)
         gr.Draw("P");
-        ym=mean
+        #ym=mean
+        ym=1.0
+        #l1 = TLine(ym,0,ym,hRat.GetNbinsX())
         l1 = TLine(ym,0,ym,hRat.GetNbinsX())
         l1.SetLineStyle(2)
         l1.SetLineWidth(3)
@@ -371,7 +390,7 @@ if __name__ == '__main__':
         y0=0.85
     ## latex.DrawLatex(x0, y0, '#color[1]{ Mean = ' + '{0:.3f}'.format(p0fit.GetParameter(0)) + ' #pm ' + '{0:.3f}'.format(p0fit.GetParError(0)) +'}')
     ## latex.DrawLatex(x0, y0, '#color[1]{ Mean = ' + '{0:.3f}'.format(p0fit.GetParameter(0))+'}')
-        latex.DrawLatex(x0, y0, '#color[1]{ Mean = ' + '{0:.1f}'.format(p0fit.GetParameter(0))+'}')
+        #latex.DrawLatex(x0, y0, '#color[1]{ Mean = ' + '{0:.1f}'.format(p0fit.GetParameter(0))+'}')
         c1.Modified()
         c1.Update()
        
@@ -382,5 +401,5 @@ if __name__ == '__main__':
 
         if os.getenv("FROMGUI") == None:
             print "Not from GUI"
-            if not DoAll:
+            if not (DoAll or WhichDS == 'All'):
                 raw_input('\npress return to end the program...')

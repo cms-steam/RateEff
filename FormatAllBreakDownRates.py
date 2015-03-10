@@ -5,9 +5,9 @@ import glob
 import re
 #import numpy as np
 #import plotPathsOne
-#dataSets = ['B2G']
 
-dataSets = ['B2G','SUSY','EXO','Higgs','TOP','BPH','E_GAMMA','Taus','SMP','JET_MET','BTV']
+#dataSets = ['B2G','SUSY','EXO','Higgs','TOP','BPH','E_GAMMA','Taus','SMP','JET_MET','BTV']
+dataSets = ['All']
 print dataSets
 for d in range(0, len(dataSets)):
     print dataSets[d]
@@ -18,7 +18,8 @@ for d in range(0, len(dataSets)):
     #command = "'python plotPathsOne.py "
     #sendlog = " >& "
     #dataset = '"'+dataSets[d]+'"'
-    string = "python plotRatePerSampleOne.py "
+    #string = "python plotRatePerSampleOne.py "
+    string = "python plotRatePerSampleOnevsTwo.py "
     pag = "'"+dataSets[d]+"'"
     string2 = ">& " 
     pagtxt = dataSets[d]+'.txt'
@@ -26,7 +27,8 @@ for d in range(0, len(dataSets)):
     #print dataset 
     #os.system(command+dataset+"'" + sendlog + dataSets[d] + ".txt")
 for d in range(0,len(dataSets)):
-    cmd = "python CleanSummary.py "
+    #cmd = "python CleanSummary.py "
+    cmd = "python CleanSummaryTwo.py "
     pagtxt = dataSets[d]+'.txt'
     os.system(cmd+ pagtxt)
 
