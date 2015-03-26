@@ -95,14 +95,8 @@ template<typename Type1, typename Type2>
 Int_t indexOf(const std::vector<Type1>& whereToLook, const Type2& whatToFind, const Int_t firstOccurance = -1)
 {
   Int_t   index = static_cast<Int_t>(whereToLook.size());
-  while (--index >= 0 && whereToLook[index] != whatToFind) ;
-
-  if(firstOccurance > -1) 
-    {
-      index = firstOccurance;
-      while (--index >= 0 && whereToLook[index] != whatToFind) ;
-    }
-
+  if(firstOccurance > -1) index = firstOccurance;
+  while (--index >= 0 && whereToLook[index] != whatToFind) ; 
   return index;
 }
 
@@ -162,15 +156,18 @@ Bool_t Dataset::checkEvent(const std::vector<Int_t>& triggerBit)
 {
   pass      = kFALSE;
   const UInt_t    numTriggers = size();
-
+  //std::cout << "------>checking if passes in "<<name<<std::endl;
+  //std::cout <<std::endl;
   for (UInt_t iTrig = 0; iTrig < numTriggers; ++iTrig) {
-    ////std::cout << operator[](iTrig).index << ":" << triggerBit[operator[](iTrig).index] << " ";
+    //std::cout << operator[](iTrig).index << ":" << triggerBit[operator[](iTrig).index] << " ";
+    //std::cout <<"checking nb"<<iTrig<<" "<<operator[](iTrig).name<<",index="<<operator[](iTrig).index<<":"<<triggerBit[operator[](iTrig).index]<<std::endl;
     if (triggerBit[operator[](iTrig).index] == 1) {
       pass  = kTRUE;
       ++numEventsPassed;
       break;
     }
   } // end loop over trigger bits
+  //std::cout <<"pass="<<pass<<std::endl;
   return pass;
 }
 
@@ -210,7 +207,7 @@ void Dataset::computeRate(Bool_t bycount, Double_t collisionRate, Double_t mu, U
       addedUncertainty2 [iSet]       = toRateUncertainty2(bycount,collisionRate, mu, numEventsAdded[iSet], numProcessedEvents);
       ////std::cout << "  +   " << numEventsAdded[iSet] << " -> " << addedRate[iSet] << " +/- " << TMath::Sqrt(addedUncertainty2[iSet]) << std::endl;
     } // end loop over compared datasets
-  ////std::cout << "  +   " << name << " : " << numEventsPassed << " -> " << rate << std::endl;
+    //std::cout << "  +   " << name << " : " << numEventsPassed << " -> " << rate << std::endl;
 }
 
 void Dataset::computeRate(float scaleddenominator) //DATA ONLY
@@ -301,6 +298,7 @@ void Dataset::report(std::ofstream& output, const std::vector<Dataset>& datasets
 void SampleDiagnostics::setup()
 {
   const UInt_t        numDatasets = size();
+  std::cout << "numdatasets diag.setup " << numDatasets << std::endl;
   commonEvents                    .resize(numDatasets);
   commonRates                     .resize(numDatasets);
   commonRateUncertainties2        .resize(numDatasets);
@@ -339,8 +337,11 @@ void SampleDiagnostics::fill( const std::vector<Int_t>& triggerBit )
   const UInt_t          numDatasets = size();
 
   // First loop to record the decision of each dataset
-  for (UInt_t iSet = 0; iSet < numDatasets; ++iSet) 
+  for (UInt_t iSet = 0; iSet < numDatasets; ++iSet) {
+    //std::cout << "iset " << iSet <<std::endl;
     operator[](iSet).checkEvent(triggerBit);
+    //if (operator[](iSet).pass) std::cout<< "checkEvent passed " << iSet <<std::endl;
+  }
 
   // Second loop to record the correlations
   Int_t                 numPasses   = 0;
@@ -427,12 +428,14 @@ void SampleDiagnostics::write() const
   Double_t          overhead      = 0;
   Double_t          overheadErr   = 0;
   for (Int_t iSet = 0, xBin = 1; iSet < numDatasets; ++iSet, ++xBin) {
+
     const Dataset&  dataset       = at(iSet);
     if (!dataset.isNewTrigger) {
       overhead     += dataset.rate;
       overheadErr  += dataset.rateUncertainty2;      // I think this is over-estimating it because the values are NOT uncorrelated, but oh well
     }
     if (iSet == firstNewTrigger)    ++xBin; 
+    std::cout<< "dataset rate " << dataset.name << " " << dataset.rate << std::endl;
     if (dataset.rate == 0)          continue;
 
     for (Int_t jSet = 0, yBin = 1; jSet <= numDatasets; ++jSet, ++yBin) {
@@ -444,8 +447,10 @@ void SampleDiagnostics::write() const
       hSharedRate ->SetBinContent (xBin, yBin, commonRates[iSet][jSet]);
       hSharedRate ->SetBinError   (xBin, yBin, TMath::Sqrt(commonRateUncertainties2[iSet][jSet]));
     } // end loop over other datasets
-    std::cout<<"Fin Dataset ="<<dataset.name<<" weighted Rate="<<dataset.weightedRate<<"+-"<<TMath::Sqrt(dataset.weightedRateUncertainty2)<<std::endl;
-    std::cout<<"Fin Dataset ="<<dataset.name<<" Rate="<<dataset.rate<<"+-"<<TMath::Sqrt(dataset.rateUncertainty2)<<std::endl;
+    //std::cout<<"Fin Dataset ="<<dataset.name<<" weighted Rate="<<dataset.weightedRate<<"+-"<<TMath::Sqrt(dataset.weightedRateUncertainty2)<<std::endl;
+    //std::cout<<"Fin Dataset ="<<dataset.name<<" Rate="<<dataset.rate<<"+-"<<TMath::Sqrt(dataset.rateUncertainty2)<<std::endl;
+
+
 
     hDataSetPie->SetBinContent(xBin,dataset.weightedRate);
     hDataSetPie->SetBinError(xBin,TMath::Sqrt(dataset.weightedRateUncertainty2));
@@ -608,10 +613,11 @@ HLTDatasets::HLTDatasets(const std::vector<TString>& triggerNames, const Char_t*
               if (triggerIndex < 0 || (emulationIndex >= 0 && preferEmulatedTriggers))
                 datasetsConfig.back().push_back(Trigger(emulationName, emulationIndex));
               else {
-		if(notInDataset[triggerIndex]    == kFALSE)
+		if( notInDataset[triggerIndex]    == kFALSE)
 		  {
 		    const Int_t secondTriggerIndex  = indexOf(triggerNames, line, triggerIndex);
-		    triggerIndex = secondTriggerIndex;
+		    if (secondTriggerIndex<0) std::cout<<"Warning : Could not find another occurence of already used path"<<line<<", will use same index : only a problem assessing Parked datasets, not if making PAG Pies"<<std::endl;
+		    else triggerIndex = secondTriggerIndex;
 		  }
 		datasetsConfig.back().push_back(Trigger(line, triggerIndex));
 	      }
@@ -721,6 +727,7 @@ void HLTDatasets::write(const Char_t* outputPrefix, Option_t* writeOptions) cons
 
   // Store corerlation plots
   const UInt_t      numDiagnostics = diagnostics.size();
+
 // 	printf("HLTDatasets::write. About to call diagnostics[iSample].write\n"); //RR
   for (UInt_t iSample = 0; iSample < numDiagnostics; ++iSample)
     diagnostics[iSample].write();
