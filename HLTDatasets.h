@@ -92,8 +92,11 @@ public:
     : name              (datasetName)
     , isNewTrigger      (isNewTrigger)
     , numEventsPassed   (0)
+    , numWeightedEventsPassed(0) 
     , rate              (0)
     , rateUncertainty2  (0)
+    , weightedRate              (0)
+    , weightedRateUncertainty2  (0)
   { }
   /**
     Sets up storage for this dataset, given the list of datasets in the scenario.
