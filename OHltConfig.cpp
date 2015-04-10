@@ -114,6 +114,7 @@ OHltConfig::OHltConfig(TString cfgfile, OHltMenu *omenu)
       Setting &pa = cfg.lookup("process.paths");
       Setting &fn = cfg.lookup("process.fnames");
       Setting &muc = cfg.lookup("process.doMuonCuts");
+      Setting &mucfm = cfg.lookup("process.doMuonCutsforMuons");
       Setting &ec = cfg.lookup("process.doElecCuts");
 
       const int nfiles = (const int)fn.getLength();
@@ -141,6 +142,8 @@ OHltConfig::OHltConfig(TString cfgfile, OHltMenu *omenu)
          psigmas.push_back(ftmp);
          btmp = muc[i];
          pdomucuts.push_back(btmp);
+         btmp = mucfm[i];
+         pdomucutsformuons.push_back(btmp);
          btmp = ec[i];
          pdoecuts.push_back(btmp);
       }
@@ -438,6 +441,7 @@ void OHltConfig::print()
        cout << "ppaths["<<i<<"]: " << ppaths[i] << endl;
        cout << "psigmas["<<i<<"]: " << psigmas[i] << endl;
        cout << "pdomucuts["<<i<<"]: " << pdomucuts[i] << endl;
+       cout << "pdomucutsformuons["<<i<<"]: " << pdomucutsformuons[i] << endl;
        cout << "pdoecuts["<<i<<"]: " << pdoecuts[i] << endl;
        cout << endl;
    }

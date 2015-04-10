@@ -229,6 +229,8 @@ void OHltTree::Loop(
 
       if (cfg->pdomucuts[procID] && MCmu3!=0)
          continue;
+      if (cfg->pdomucutsformuons[procID] && MCmu3==0)
+         continue;
       if (cfg->pdoecuts[procID] && MCel3!=0)
          continue;
 

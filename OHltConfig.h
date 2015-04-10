@@ -81,6 +81,7 @@ public:
    std::vector<TString> ppaths;
    std::vector<TString> pfnames;
    std::vector<bool> pdomucuts;
+   std::vector<bool> pdomucutsformuons;
    std::vector<bool> pdoecuts;
    std::vector<float> psigmas;
    std::vector <int> pisPhysicsSample; // Is it a RATE sample (MB, QCD) or a PHYSICS sample (W,Z,top)
