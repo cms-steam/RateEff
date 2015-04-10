@@ -19,8 +19,8 @@ def main(argv):
     input_referencecolumn = 0
     input_useconfdbprescales = 0
     input_pdsort = 0
-    input_config = "/cdaq/physics/firstCollisions10/v5.0/HLT/V2"
-    input_refconfig = "/cdaq/physics/firstCollisions10/v5.1/HLT_900GeV/V3"
+    input_config = "/dev/CMSSW_7_3_0/GRun/V56"
+    input_refconfig = "/dev/CMSSW_7_3_0/GRun/V56"
 
     opts, args = getopt.getopt(sys.argv[1:], "c:onfdp:s:r:h", ["config=","orcoff","notechnicaltriggers","fakel1seeds","datasetsorting","addreferenceprescales=","confdbprescales=","referenceconfig=","help"])
 
@@ -115,20 +115,20 @@ class ConfdbToOpenHLT:
         rateefflibfile = open("OHltTree_FromConfDB.h",'w')
         rateefforiglibfile = open("OHltTree.h")
 
-        # Use edmConfigFromDB to get a temporary HLT configuration
+        # Use hltConfigFromDB to get a temporary HLT configuration
         configcommand = ""
         if(self.orcoffmenu == 1):
-            configcommand = "edmConfigFromDB --orcoff --configName " + self.configname + " --cff >& temphltmenu.py"
+            configcommand = "hltConfigFromDB --orcoff --configName " + self.configname + " --cff >& temphltmenu.py"
         else:
-            configcommand = "edmConfigFromDB --configName " + self.configname + " --cff >& temphltmenu.py"
-        #configcommand = "edmConfigFromDB --orcoff --configName " + self.configname + " --cff >& temphltmenu.py"
+            configcommand = "hltConfigFromDB --configName " + self.configname + " --cff >& temphltmenu.py"
+        #configcommand = "hltConfigFromDB --orcoff --configName " + self.configname + " --cff >& temphltmenu.py"
             
         os.system(configcommand)
 
-        # Use edmConfigFromDB to get a temporary HLT configuration that determines the prescales applied online 
+        # Use hltConfigFromDB to get a temporary HLT configuration that determines the prescales applied online 
         # We assume this is always from ORCOFF...
-        referencemenuconfigcommand = "edmConfigFromDB --orcoff --configName " + self.refconfigname + " --cff >& refhltmenu.py"
-        #        referencemenuconfigcommand = "edmConfigFromDB --configName " + self.configname + " --cff >& refhltmenu.py"
+        #referencemenuconfigcommand = "hltConfigFromDB --orcoff --configName " + self.refconfigname + " --cff >& refhltmenu.py"
+        referencemenuconfigcommand = "hltConfigFromDB --configName " + self.configname + " --cff >& refhltmenu.py"
         os.system(referencemenuconfigcommand)
     
         # Setup a fake process and load the HLT configuration for the reference menu
