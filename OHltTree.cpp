@@ -333,7 +333,10 @@ void OHltTree::Loop(
          if (triggerBit[it])
          {  
 	    if (cfg->isMCPUreweight == true) wtPU = MyWeight;
-	    if (not MCWeight == 0) wtMC = MCWeight*MCWeightSign;
+	    if (not MCWeight == 0) { 
+	      wtMC = MCWeight;
+	      if ( MCWeightSign < 0 ) wtMC = -wtMC;
+	    }
 
             rc->iCount[it] = rc->iCount[it] + (1 * wtPU * wtMC);
             rc->incrRunLSCount(Run, LumiBlock, it); // for per LS rates!
