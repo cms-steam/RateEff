@@ -424,6 +424,7 @@ public:
    Float_t MCphi[1203000]; //[NMCpart]
    Float_t MCPtHat;
    Float_t MCWeight;
+   Float_t MCWeightSign;
    Int_t MCmu3;
    Int_t MCel3;
    Int_t MCbb;
