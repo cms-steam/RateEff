@@ -6586,6 +6586,7 @@ public:
    TBranch *b_MCphi; //!
    TBranch *b_MCPtHat; //!
    TBranch *b_MCWeight; //!
+   TBranch *b_MCWeightSign; //!
    TBranch *b_MCmu3; //!
    TBranch *b_MCel3; //!
    TBranch *b_MCbb; //!
@@ -14382,6 +14383,7 @@ void OHltTree::Init(TTree *tree)
    fChain->SetBranchAddress("MCphi", MCphi, &b_MCphi);
    fChain->SetBranchAddress("MCPtHat", &MCPtHat, &b_MCPtHat);
    fChain->SetBranchAddress("MCWeight", &MCWeight, &b_MCWeight);
+   fChain->SetBranchAddress("MCWeightSign", &MCWeightSign, &b_MCWeightSign);
    fChain->SetBranchAddress("MCmu3", &MCmu3, &b_MCmu3);
    fChain->SetBranchAddress("MCel3", &MCel3, &b_MCel3);
    fChain->SetBranchAddress("MCbb", &MCbb, &b_MCbb);
