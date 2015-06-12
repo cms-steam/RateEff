@@ -23,10 +23,12 @@ ilumi = 5e32
 collrate = (nfillb/mfillb)/xtime
 
 def Rate(counts):
+    if counts < 0 : return 0
     rate = collrate * (1 - math.exp(-1* (xsec*ilumi*counts/nevt)/collrate))
     return rate
 
 def RateErr(counts):
+    if counts < 0 : return -1
     rateerr = xsec * ilumi * ((math.sqrt(counts + ((counts)**2)/nevt))/nevt)
     return rateerr
 

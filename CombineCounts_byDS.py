@@ -47,10 +47,12 @@ from CrossSections import crossSections13TeV
 ## ========================================================================= ##
 
 def Rate(counts,nevt,xs):
+    if counts < 0 : return 0
     rate = collrate * (1 - math.exp(-1* (xs*ilumi*counts/nevt)/collrate))
     return rate
 
 def RateErr(counts,nevt,xs):
+    if counts < 0 : return -1
     rateerr = xs * ilumi * ((math.sqrt(counts + ((counts)**2)/nevt))/nevt)
     return rateerr
 
