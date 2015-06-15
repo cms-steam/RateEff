@@ -112,9 +112,6 @@ void OHltTree::Loop(
 
    nEventsProcessed = 0;
 
-   double wtPU = 1.;
-   double wtMC = 1.;  
-   double MyWeight = 1.;
    if (cfg->isMCPUreweight == true) 
      {
 
@@ -129,8 +126,9 @@ void OHltTree::Loop(
    //TH1F *MCPVwithPU = new TH1F("MCPVwithPU", "MCPVwithPU", 25, 0., 50.);
 
    for (Long64_t jentry=0; jentry<nentries; jentry++)
-   {
-      Long64_t ientry = LoadTree(jentry);
+   { 
+
+     Long64_t ientry = LoadTree(jentry);
       if (ientry < 0)
          break;
       fChain->GetEntry(jentry);
@@ -284,6 +282,7 @@ void OHltTree::Loop(
             }
          }
       }
+     double MyWeight = 1.;
 
       // Get PU weight
       if (cfg->isMCPUreweight == true) 
@@ -325,18 +324,20 @@ void OHltTree::Loop(
          }
       }
       primaryDatasetsDiagnostics.fill(triggerBit); //SAK -- record primary datasets decisions
+     double wtMC = 1.;  
+     double wtPU = 1.;  
 
+     if (cfg->isMCPUreweight == true) wtPU = MyWeight;
+     if (not MCWeight == 0) { 
+	wtMC = MCWeight;
+	if ( MCWeightSign < 0 ) wtMC = -wtMC;
+      }
       /* ******************************** */
       // 2. Loop to check overlaps
       for (int it = 0; it < nTrig; it++)
       {
          if (triggerBit[it])
          {  
-	    if (cfg->isMCPUreweight == true) wtPU = MyWeight;
-	    if (not MCWeight == 0) { 
-	      wtMC = MCWeight;
-	      if ( MCWeightSign < 0 ) wtMC = -wtMC;
-	    }
 
             rc->iCount[it] = rc->iCount[it] + (1 * wtPU * wtMC);
             rc->incrRunLSCount(Run, LumiBlock, it); // for per LS rates!
