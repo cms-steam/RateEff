@@ -329,8 +329,9 @@ void OHltTree::Loop(
 
      if (cfg->isMCPUreweight == true) wtPU = MyWeight;
      if (not MCWeight == 0) { 
-	wtMC = MCWeight;
-	if ( MCWeightSign < 0 ) wtMC = -wtMC;
+       //MC@NLO weights : only their absolute value makes sense
+       wtMC= abs(MCWeight) <1 ? MCWeight : 1;
+       if ( MCWeightSign < 0 ) wtMC = -wtMC;
       }
       /* ******************************** */
       // 2. Loop to check overlaps
