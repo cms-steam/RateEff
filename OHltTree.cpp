@@ -203,11 +203,29 @@ void OHltTree::Loop(
       if (cfg->pdoecuts[procID] && MCel3!=0)
          continue;
 
+
+     double MyWeight = 1.;
+
+      // Get PU weight
+      if (cfg->isMCPUreweight == true) 
+	{
+	  MyWeight = LumiWeights_.weight( genNVrt );
+	  //MCPVwithPU->Fill(genNVrt, MyWeight);
+	}
+     double wtMC = 1.;  
+     double wtPU = 1.;  
+     
+     if (cfg->isMCPUreweight == true) wtPU = MyWeight;
+     if (not MCWeight == 0) { 
+       //MC@NLO weights : only their absolute value makes sense
+       wtMC= abs(MCWeight) <1 ? MCWeight : 1;
+       if ( MCWeightSign < 0 ) wtMC = -wtMC;
+      }
+
       //////////////////////////////////////////////////////////////////
       // Get Denominator (normalization and acc. definition) for efficiency evaluation
       //////////////////////////////////////////////////////////////////
 
-      //     if (cfg->pnames[procID]=="zee"||cfg->pnames[procID]=="zmumu"){
       if (cfg->pisPhysicsSample[procID]!=0)
       {
          int accMCMu=0;
@@ -232,35 +250,29 @@ void OHltTree::Loop(
             }
             if ((cfg->pisPhysicsSample[procID]==1 && accMCEle>=1 ))
             {
-               Den=Den+1;
+               Den=Den+wtMC;
             }
             else if ((cfg->pisPhysicsSample[procID]==2 && accMCMu >=1))
             {
-               Den=Den+1;
+               Den=Den+wtMC;
             }
             else if ((cfg->pisPhysicsSample[procID]==3 && accMCEle>=1
                   && accMCMu >=1))
             {
-               Den=Den+1;
+               Den=Den+wtMC;
             }
             else if ((cfg->pisPhysicsSample[procID]==5 && accMCPi>=1 ))
             {
-               Den=Den+1;
+               Den=Den+wtMC;
             }
             else
             {
                continue;
             }
          }
+      } else {
+	Den+=wtMC;
       }
-     double MyWeight = 1.;
-
-      // Get PU weight
-      if (cfg->isMCPUreweight == true) 
-	{
-	  MyWeight = LumiWeights_.weight( genNVrt );
-	  //MCPVwithPU->Fill(genNVrt, MyWeight);
-	}
       //////////////////////////////////////////////////////////////////
       // Loop over trigger paths and do rate counting
       //////////////////////////////////////////////////////////////////
@@ -294,15 +306,6 @@ void OHltTree::Loop(
          }
       }
       primaryDatasetsDiagnostics.fill(triggerBit); //SAK -- record primary datasets decisions
-     double wtMC = 1.;  
-     double wtPU = 1.;  
-
-     if (cfg->isMCPUreweight == true) wtPU = MyWeight;
-     if (not MCWeight == 0) { 
-       //MC@NLO weights : only their absolute value makes sense
-       wtMC= abs(MCWeight) <1 ? MCWeight : 1;
-       if ( MCWeightSign < 0 ) wtMC = -wtMC;
-      }
       /* ******************************** */
       // 2. Loop to check overlaps
       for (int it = 0; it < nTrig; it++)

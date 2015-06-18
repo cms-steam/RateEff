@@ -37,8 +37,8 @@ void fillProcesses(
       vector<TChain*> &chains,
       OHltMenu *menu,
       HLTDatasets &hltDatasets);
-
-void calcRates(
+// int : returns number of negative weight events if needed (0 otherwise)
+int calcRates(
       OHltConfig *cfg,
       OHltMenu *menu,
       vector<OHltTree*> &procs,
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
      rcs.push_back(new OHltRateCounter(omenu->GetTriggerSize(), omenu->GetL1TriggerSize()));
    }
    OHltRatePrinter* rprint = new OHltRatePrinter();
-   calcRates(ocfg, omenu, procs, rcs, rprint, hltDatasets);
+   int TotalWeightedEvents=calcRates(ocfg, omenu, procs, rcs, rprint, hltDatasets);
 
    /* **** */
    // Get Seed prescales
@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
       rprint->printRatesTwiki(ocfg, omenu);
       //    rprint->printPrescalesCfg(ocfg,omenu);
       if (nevts > ocfg->nEntries && ocfg->nEntries > 0) nevts=ocfg->nEntries;
+      nevts=TotalWeightedEvents; //negative weight events are counted negatively
       printf("nevents to TNamed = %d",nevts);
       rprint->writeHistos(ocfg, omenu,nevts);
       if(ocfg->nonlinearPileupFit != "none")
@@ -191,7 +192,7 @@ void fillProcesses(
 /* ********************************************** */
 // Do the actual rate count & rate conversion
 /* ********************************************** */
-void calcRates(
+int calcRates(
       OHltConfig *cfg,
       OHltMenu *menu,
       vector<OHltTree*> &procs,
@@ -256,9 +257,10 @@ void calcRates(
    {
       coMa.push_back(ftmp);
    }
-
+   int TotalWeightedEvents=0;
    for (unsigned int i=0; i<procs.size(); i++)
    {
+      double chainEntries = (double)procs[i]->fChain->GetEntries();
       procs[i]->Loop(
             rcs[i],
             cfg,
@@ -270,7 +272,9 @@ void calcRates(
             h3,
             h4,
             hltDatasets[i]);
-
+      // take into account negative weight entries
+      chainEntries=DenEff;  
+      TotalWeightedEvents+=chainEntries;
       for (unsigned int iLS=0; iLS<rcs[0]->perLumiSectionCount.size(); iLS++)
       {
          RatePerLS.push_back(Rate);
@@ -288,7 +292,6 @@ void calcRates(
       double scaleddenoPerLS = -1;
       double prescaleSum = 0.0;
 
-      double chainEntries = (double)procs[i]->fChain->GetEntries();
       if (deno <= 0. || deno > chainEntries)
       {
          deno = chainEntries;
@@ -398,7 +401,7 @@ void calcRates(
 	   coDen[j] += ((double)rcs[i]->iCount[j]); // ovelap denominator 
          }
 
-         else
+         else   // MC 
          {
 	   if (cfg->isCounts == 1)
 	     {
@@ -479,8 +482,10 @@ void calcRates(
 	 CountPerLS,
 	 totalCountPerLS,
 	 InstLumiPerLS);
-
+   return TotalWeightedEvents;
+     
 }
+
 void calcEff(
       OHltConfig *cfg,
       OHltMenu *menu,
