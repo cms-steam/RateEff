@@ -63,9 +63,15 @@ class AddL1TriggerBit:
         rateefforiglibfilescan = open("OHltTree.h")
         rateefforiglibfile = open("OHltTree.h")
 
+        # some Tech bits have a "." in them : cannot be in a C++ variable name
+        if '.' not in self.l1name :
+            l1bitname=self.l1name
+        else:
+            tmp=self.l1name.split('.')
+            l1bitname=tmp[0]+tmp[1]
         # First check if the L1 already exists...
         scanlines = rateefforiglibfilescan.readlines()
-        scanl1 = self.l1name + ';'
+        scanl1 = l1bitname + ';'
         print "Looking for " + scanl1
         for scanline in scanlines:
             if(scanline.find(scanl1) != -1):
@@ -73,15 +79,15 @@ class AddL1TriggerBit:
                 return -2 
                                                     
 
-        # Now we have all the information, construct any configuration/branch changes
-        theintbits.append('  Int_t           ' + self.l1name + ';')
-        thebranches.append('  TBranch        *b_' + self.l1name + ';   //!')
-        theaddresses.append('  fChain->SetBranchAddress("' + self.l1name + '", &' + self.l1name + ', &b_' + self.l1name + ');')
-        themaps.append('  fChain->SetBranchAddress("' + self.l1name + '", &map_BitOfStandardHLTPath["' + self.l1name + '"], &b_' + self.l1name + ');')
-        theintprescls.append('  Int_t           ' + self.l1name + '_Prescl;')
-        thepresclbranches.append('  TBranch        *b_' + self.l1name + '_Prescl;   //!')
-        theprescladdresses.append('  fChain->SetBranchAddress("' + self.l1name + '_Prescl", &' + self.l1name + '_Prescl, &b_' + self.l1name + '_Prescl);')
-        thepresclmaps.append('  fChain->SetBranchAddress("' + self.l1name + '_Prescl", &map_RefPrescaleOfStandardHLTPath["' + self.l1name + '"], &b_' + self.l1name + '_Prescl);')
+        # Now we have all the information, construct any configurxsation/branch changes
+        theintbits.append('  Int_t           ' + l1bitname + ';')
+        thebranches.append('  TBranch        *b_' + l1bitname + ';   //!')
+        theaddresses.append('  fChain->SetBranchAddress("' + self.l1name + '", &' + l1bitname + ', &b_' + l1bitname + ');')
+        themaps.append('  fChain->SetBranchAddress("' + self.l1name + '", &map_BitOfStandardHLTPath["' + self.l1name + '"], &b_' + l1bitname + ');')
+        theintprescls.append('  Int_t           ' + l1bitname + '_Prescl;')
+        thepresclbranches.append('  TBranch        *b_' + l1bitname + '_Prescl;   //!')
+        theprescladdresses.append('  fChain->SetBranchAddress("' + self.l1name + '_Prescl", &' + l1bitname + '_Prescl, &b_' + l1bitname + '_Prescl);')
+        thepresclmaps.append('  fChain->SetBranchAddress("' + self.l1name + '_Prescl", &map_RefPrescaleOfStandardHLTPath["' + self.l1name + '"], &b_' + l1bitname + '_Prescl);')
                 
         pathcount = 1
 

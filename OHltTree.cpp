@@ -80,13 +80,7 @@ void OHltTree::Loop(
          fChain->SetBranchStatus("HLT_*", kTRUE);
          fChain->SetBranchStatus("AlCa_*", kTRUE);
       }
-      if (cfg->selectBranchOpenHLT)
-      {
-         fChain->SetBranchStatus("*pf*", kTRUE);
-         fChain->SetBranchStatus("*oh*", kTRUE);
-         fChain->SetBranchStatus("*recoJet*", kTRUE);
-         fChain->SetBranchStatus("*recoMet*", kTRUE);
-      }
+
       if (cfg->selectBranchReco)
       {
          fChain->SetBranchStatus("*reco*", kTRUE);
@@ -179,29 +173,6 @@ void OHltTree::Loop(
 
          previousLumiSection = currentLumiSection;
       }
-
-      // Do operations on L1extra quantities before calling SetopenL1Bits, 
-      // so that they can be used in emulation of new L1 triggers, or later 
-      // by HLT paths
-      SetL1MuonQuality();
-      RemoveEGOverlaps();
-
-      // Do emulations of any new L1 bits. This is done before calling 
-      // ApplyL1Prescales and looping over the HLT paths, so that 
-      // L1 prescales are applied coherently to real L1 bits and 
-      // "OpenL1" bits
-      SetOpenL1Bits();
-
-      // ccla example to extract timing info from L1Tech_XXX_5bx bits
-      // if (L1Tech_BSC_minBias_OR_v0_5bx >0){
-      //   cout << "L1Tech_BSC_minBias_OR_v0_5bx: " << L1Tech_BSC_minBias_OR_v0_5bx 
-      //        << " Unpacked: " ;
-      //   for (unsigned int i = 0; i<UnpackBxInEvent ; ++i){
-      //     bool bitOn=L1Tech_BSC_minBias_OR_v0_5bx & (1 << i);
-      //     std::cout << bitOn << " ";
-      //   }
-      //   cout << "\n";
-      // }
 
       // 1. Loop to check which Bit fired
       // Triggernames are assigned to trigger cuts in unambigous way!
@@ -303,8 +274,7 @@ void OHltTree::Loop(
          // Standard paths
          TString st = menu->GetTriggerName(i);
          if (st.BeginsWith("HLT_") || st.BeginsWith("L1_")
-               || st.BeginsWith("L1Tech_") || st.BeginsWith("AlCa_")
-               || st.BeginsWith("OpenL1_") )
+               || st.BeginsWith("L1Tech_") || st.BeginsWith("AlCa_"))
          {
             // Prefixes reserved for Standard HLT&L1	
 	   if (map_L1BitOfStandardHLTPath.find(st)->second>0)
@@ -320,7 +290,7 @@ void OHltTree::Loop(
          }
          else
          {
-            CheckOpenHlt(cfg, menu, rc, i);
+	   cout<<"Error cannot find "<<st<<endl;
          }
       }
       primaryDatasetsDiagnostics.fill(triggerBit); //SAK -- record primary datasets decisions
