@@ -1,0 +1,165 @@
+|L1_ZeroBias	|L1_ZeroBias|0 |	 
+|L1_AlwaysTrue |L1_AlwaysTrue |1 |  
+|L1_Mu12_EG10 |L1_Mu12_EG10 |9 |   
+|L1_Mu5_EG15 |L1_Mu5_EG15 |10 |    
+|L1_DoubleTauJet40er |L1_DoubleTauJet40er|11| 
+|L1_IsoEG20er_TauJet20er_NotWdEta0 |L1_IsoEG20er_TauJet20er_NotWdEta0|12| 
+|L1_Mu16er_TauJet20er |L1_Mu16er_TauJet20er |13 |  
+|L1_QuadS1JetC84 |L1_QuadJetC84 |14 |   
+|L1_DoubleS1JetC120 |L1_DoubleJetC120 |16 |    
+|L1_SingleS1Jet52 |L1_SingleJet52 |17 |     
+|L1_SingleS1Jet68 |L1_SingleJet68 |18 |      
+|L1_SingleS1Jet92 |L1_SingleJet92 |19 |       
+|L1_SingleS1Jet128 |L1_SingleJet128 |20 |        
+|L1_SingleS1Jet176 |L1_SingleJet176 |21 | 
+|L1_SingleS1Jet200 |L1_SingleJet200 |22 |  
+|L1_SingleS1Jet36 |L1_SingleJet36 |23 |   
+|L1_DoubleMu0 |L1_DoubleMu0 |26 |    
+|L1_SingleMu30er |L1_SingleMu30er |27 |     
+|L1_Mu3_S1JetC92_WdEtaPhi2 |L1_Mu3_JetC92_WdEtaPhi2 |28 |      
+|L1_Mu3_S1JetC16_WdEtaPhi2 |L1_Mu3_JetC16_WdEtaPhi2 |29 |       
+|L1_Mu3_S1JetC52_WdEtaPhi2 |L1_Mu3_JetC52_WdEtaPhi2 |30 |        
+|L1_EG25er_HTT125 |L1_EG25er_HTT125 |31 | 
+|L1_SingleIsoEG25er |L1_SingleIsoEG25er |33 |  
+|L1_SingleIsoEG25 |L1_SingleIsoEG25 |34 |   
+|L1_SingleIsoEG28er |L1_SingleIsoEG28er |35 |    
+|L1_SingleIsoEG30er |L1_SingleIsoEG30er |36 |     
+|L1_SingleEG10 |L1_SingleEG10 |37 |      
+|L1_SingleIsoEG22er |L1_SingleIsoEG22er |38 |       
+|L1_SingleS1Jet240 |L1_SingleJet240 |39 |        
+|L1_DoubleS1JetC52 |L1_DoubleJetC52 |40 | 
+|L1_DoubleS1JetC84 |L1_DoubleJetC84 |41 |  
+|L1_SingleMu14_Eta2p1 |L1_SingleMu14er |42 |   
+|L1_DoubleS1JetC112 |L1_DoubleJetC112 |43 |    
+|L1_DoubleMu_10_Open |L1_DoubleMu_10_Open |44 |     
+|L1_DoubleMu_10_3p5 |L1_DoubleMu_10_3p5 |45 |      
+|L1_QuadS1JetC40 |L1_QuadJetC40 |46 |       
+|L1_SingleEG5 |L1_SingleEG5 |47 |        
+|L1_SingleEG25 |L1_SingleEG25 |48 | 
+|L1_SingleEG40 |L1_SingleEG40 |49 |  
+|L1_SingleIsoEG18 |L1_SingleIsoEG18 |50 |   
+|L1_SingleIsoEG20er |L1_SingleIsoEG20er |51 |    
+|L1_SingleEG20 |L1_SingleEG20 |52 |     
+|L1_SingleEG30 |L1_SingleEG30 |53 |      
+|L1_SingleEG35 |L1_SingleEG35 |54 |       
+|L1_SingleMuOpen |L1_SingleMuOpen |55 |        
+|L1_SingleMu16 |L1_SingleMu16 |56 | 
+|L1_HTT110_rHTM0p6_rHTM0p0_WdPhi6 |L1_HTT110_rHTM0p6_rHTM0p0_WdPhi6 |57 |  
+|L1_SingleMu5 |L1_SingleMu5 |58 |   
+|L1_HTT125_rHTM0p3 |L1_HTT125_rHTM0p3 |59 |    
+|L1_SingleMu20er |L1_SingleMu20er |60 |     
+|L1_SingleMu12 |L1_SingleMu12 |61 |      
+|L1_SingleMu20 |L1_SingleMu20 |62 |       
+|L1_SingleMu25er |L1_SingleMu25er |63 |        
+|L1_SingleMu25 |L1_SingleMu25 |64 | 
+|L1_SingleMu30 |L1_SingleMu30 |65 |  
+|L1_ETM30 |L1_ETM30 |66 |   
+|L1_ETM50 |L1_ETM50 |67 |    
+|L1_ETM70 |L1_ETM70 |68 |     
+|L1_ETM100 |L1_ETM100 |69 |      
+|L1_HTT125 |L1_HTT125 |70 |       
+|L1_HTT150 |L1_HTT150 |71 |        
+|L1_HTT175 |L1_HTT175 |72 | 
+|L1_HTT200 |L1_HTT200 |73 |  
+|L1_Mu20_EG10 |L1_Mu20_EG10 |74 |   
+|L1_Mu5_EG20 |L1_Mu5_EG20 |75 |    
+|L1_Mu5_IsoEG18 |L1_Mu5_IsoEG18 |76 |     
+|L1_Mu6_DoubleEG10 |L1_Mu6_DoubleEG10 |77 |      
+|L1_SingleS1JetC32_NotBptxOR |L1_SingleJetC32_NotBptxOR |78 |       
+|L1_ETM40 |L1_ETM40 |79 |        
+|L1_HTT250 |L1_HTT250 |80 | 
+|L1_Mu20_EG8 |L1_Mu20_EG8 |81 |  
+|L1_Mu6_HTT150 |L1_Mu6_HTT150 |82 |   
+|L1_Mu10er_ETM50 |L1_Mu10er_ETM50 |83 |    
+|L1_Mu14er_ETM30 |L1_Mu14er_ETM30 |84 |     
+|L1_DoubleMu7_EG7 |L1_DoubleMu7_EG7 |85 |      
+|L1_SingleMu16_Eta2p1 |L1_SingleMu16er |86 |       
+|L1_Mu8_HTT125 |L1_Mu8_HTT125 |87 |        
+|L1_Mu4_EG18 |L1_Mu4_EG18 |88 | 
+|L1_SingleMu6_NotBptxOR |L1_SingleMu6_NotBptxOR |89 |  
+|L1_DoubleMu6_EG6 |L1_DoubleMu6_EG6 |90 |   
+|L1_Mu5_DoubleEG5 |L1_Mu5_DoubleEG5 |91 |    
+|L1_DoubleEG6_HTT150 |L1_DoubleEG6_HTT150 |92 |     
+|L1_QuadS1JetC36_TauJet52 |L1_QuadJetC36_TauJet52 |93 |      
+|L1_Mu16er_IsoTau36er |L1_Mu16er_IsoTau36er |96 |       
+|L1_TripleMu0 |L1_TripleMu0 |97 |        
+|L1_TripleMu_5_5_3 |L1_TripleMu_5_5_3 |98 | 
+|L1_TripleEG_14_10_8 |L1_TripleEG_14_10_8 |100 |  
+|L1_DoubleEG_15_10 |L1_DoubleEG_15_10 |101 |   
+|L1_DoubleEG_22_10 |L1_DoubleEG_22_10 |102 |    
+|L1_DoubleEG_20_10_1LegIso |L1_DoubleEG_20_10_1LegIso |103 |     
+|L1_Mu0er_ETM55 |L1_Mu0er_ETM55 |104 |      
+|L1_DoubleS1JetC60_ETM60 |L1_DoubleJetC60_ETM60 |105 |       
+|L1_DoubleS1JetC32_WdPhi7_HTT125 |L1_DoubleJetC32_WdPhi7_HTT125 |106 |        
+|L1_S1Jet32_DoubleMu_Open_10_MuMuNotWdPhi23_JetMuWdPhi1 |L1_Jet32_DoubleMu_Open_10_MuMuNotWdPhi23_JetMuWdPhi1 |107 |  
+|L1_S1Jet32_MuOpen_EG10_MuEGNotWdPhi3_JetMuWdPhi1 |L1_Jet32_MuOpen_EG10_MuEGNotWdPhi3_JetMuWdPhi1 |108    |
+|L1_ETM60 |L1_ETM60 |109     |
+|L1_DoubleS1JetC100 |L1_DoubleJetC100 |110 | 
+|L1_QuadS1JetC60 |L1_QuadJetC60 |111 |  
+|L1_SingleS1JetC20_NotBptxOR |L1_SingleJetC20_NotBptxOR |112 |   
+|L1_DoubleS1JetC56_ETM60 |L1_DoubleJetC56_ETM60 |113 |    
+|L1_DoubleMu0_Eta1p6_WdEta18 |L1_DoubleMu0_Eta1p6_WdEta18 |114 |     
+|L1_ETM60_NotS1Jet52WdPhi2 |L1_ETM60_NotJet52WdPhi2 |115 |      
+|L1_ETM70_NotS1Jet52WdPhi2 |L1_ETM70_NotJet52WdPhi2 |116 |       
+|L1_DoubleIsoTau36er |L1_DoubleIsoTau36er |117 |        
+|L1_DoubleIsoTau40er |L1_DoubleIsoTau40er |118 | 
+|L1_TripleS1Jet_92_76_64_VBF |L1_TripleJet_92_76_64_VBF |119 |  
+|L1_DoubleIsoTau44er |L1_DoubleIsoTau44er |120 |   
+|L1_QuadMu0 |L1_QuadMu0 |121 |    
+|L1_SingleMu18er |L1_SingleMu18er |122 |     
+|L1_DoubleMu0_Eta1p6_WdEta18_OS |L1_DoubleMu0_Eta1p6_WdEta18_OS |123 |      
+|L1_DoubleMu_12_5 |L1_DoubleMu_12_5 |124 |       
+|L1_DoubleMu_10_0_WdEta18 |L1_DoubleMu_10_0_WdEta18 |126 |        
+|L1_SingleMuBeamHalo |L1_SingleMuBeamHalo |127 |
+
+|!L1Tech_BPTX_plus_AND_minus.v0 |  0
+|!L1Tech_BPTX_plus.v0 |  1
+|!L1Tech_BPTX_minus.v0 |  2
+|!L1Tech_BPTX_plus_OR_minus.v0 |  3
+|!L1Tech_BPTX_plus_AND_minus_instance1.v0   4
+|!L1Tech_BPTX_plus_AND_NOT_minus.v0 |  5
+|!L1Tech_BPTX_minus_AND_not_plus.v0 |  6
+|!L1Tech_BPTX_quiet.v0 |  7
+|!L1Tech_HCAL_HF_single_channel.v0 |  8
+|!L1Tech_HCAL_HF_coincidence_PM.v2 |  9
+|!L1Tech_HCAL_HF_MMP_or_MPP.v1 |  10
+|!L1Tech_HCAL_HO_totalOR.v0 |  11
+|!L1Tech_HCAL_HBHE_totalOR.v0 |  12
+|!L1Tech_BPTX_PreBPTX.v0 |  16
+|!L1Tech_DT_GlobalOR.v0 |  20
+|!L1Tech_RPC_TTU_barrel_Cosmics.v0 |  24
+|!L1Tech_RPC_TTU_pointing_Cosmics.v0 |  25
+|!L1Tech_RPC_TTU_RBplus2_Cosmics.v0 |  26
+|!L1Tech_RPC_TTU_RBplus1_Cosmics.v0 |  27
+|!L1Tech_RPC_TTU_RB0_Cosmics.v0 |  28
+|!L1Tech_RPC_TTU_RBminus1_Cosmics.v0 |  29
+|!L1Tech_RPC_TTU_RBminus2_Cosmics.v0 |  30
+|!L1Tech_RPC_TTU_RBst1_collisions.v0 |  31
+|!L1Tech_BSC_minBias_inner_threshold1.v0 |  32
+|!L1Tech_BSC_minBias_inner_threshold2.v0 |  33
+|!L1Tech_BSC_minBias_OR.v0 |  34
+|!L1Tech_BSC_HighMultiplicity.v0 |  35
+|!L1Tech_BSC_halo_beam2_inner.v0 |  36
+|!L1Tech_BSC_halo_beam2_outer.v0 |  37
+|!L1Tech_BSC_halo_beam1_inner.v0 |  38
+|!L1Tech_BSC_halo_beam1_outer.v0 |  39
+|!L1Tech_BSC_minBias_threshold1.v0 |  40
+|!L1Tech_BSC_minBias_threshold2.v0 |  41
+|!L1Tech_BSC_splash_beam1.v0 |  42
+|!L1Tech_BSC_splash_beam2.v0 |  43
+|!L1Tech_ZDC_Scint_tight_vertex.v0 |  48
+|!L1Tech_ZDC_Scint_loose_vertex.v0 |  49
+|!L1Tech_ZDC_Scint_plus.v0 |  50
+|!L1Tech_ZDC_Scint_minus.v0 |  51
+|!L1Tech_TOTEM_Diffractive.v0 |  52
+|!L1Tech_TOTEM_MinBias.v0 |  53
+|!L1Tech_TOTEM_ZeroBias.v0 |  54
+|!L1Tech_TOTEM_LowMultiplicity.v0 |  55
+|!L1Tech_FSC_St3Sect45_uppLeft.v0 |  56
+|!L1Tech_FSC_St3Sect45_uppRight.v0 |  57
+|!L1Tech_FSC_St3Sect45_downRight.v0 |  58
+|!L1Tech_FSC_St3Sect45_downLeft.v0 |  59
+|!L1Tech_CASTOR_0.v0 |  60
+|!L1Tech_CASTOR_TotalEnergy.v0 |  61
+|!L1Tech_CASTOR_EM.v0 |  62
+|!L1Tech_CASTOR_HaloMuon.v0 |  63 
